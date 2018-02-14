@@ -15,7 +15,7 @@
         android:textStyle="bold"
         android:textSize="18sp"
         android:text="Collect data"
-        android:padding="36dp"
+        android:padding="20dp"
         android:layout_gravity="center_horizontal"/>
 
     <TextView
@@ -38,7 +38,7 @@
             android:paddingLeft="24dp"
             android:paddingRight="24dp"
             android:layout_marginTop="16dp"
-            android:layout_marginBottom="16dp"
+            android:layout_marginBottom="6dp"
             android:layout_centerHorizontal="true"
             />
 
@@ -52,6 +52,13 @@
             android:text="Got it!" />
 
     </RelativeLayout>
+
+    <TextView
+        android:id="@+id/txt_location"
+        android:layout_width="wrap_content"
+        android:layout_height="36dp"
+        android:layout_gravity="center"
+        />
 
     <CheckBox
         android:id="@+id/checkbox_garbage"

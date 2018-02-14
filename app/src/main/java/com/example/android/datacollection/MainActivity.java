@@ -74,19 +74,13 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         final CheckBox paperCheckBox = findViewById(R.id.checkbox_paper);
         final CheckBox locationCheckBox = findViewById(R.id.checkbox_location);
 
-        //reset button
+        //Buttons
         Button resetButton = findViewById(R.id.reset_button);
-
-        //submit button
         Button submitButton = findViewById(R.id.submit_button);
-
-        //location button
-        Button locationButton = findViewById(R.id.location_button);
-
-        //ArrayList button
         Button listButton = findViewById(R.id.list_button);
+        Button sendButton = findViewById(R.id.send_button);
 
-        //set on click listener for reset button
+        //onClick listener for reset button
         resetButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -107,18 +101,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             }
         });
 
-        //set onClickListener for Location button
-        locationButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
 
-                //for now only a toast message
-                Toast.makeText(MainActivity.this, "Not functional yet :)",
-                        Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        //set onClickListener for submit button
+        //onClickListener for submit button
         submitButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -131,17 +115,44 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                 dataArray.add(data);
 
                 //for now only a toast message
-                Toast.makeText(MainActivity.this, "Not functional yet :)",
+                Toast.makeText(MainActivity.this, "Added to the list",
                         Toast.LENGTH_SHORT).show();
+                if (garbageCheckBox.isChecked()) {
+                    garbageCheckBox.setChecked(false);
+                }
+                if (containerCheckBox.isChecked()) {
+                    containerCheckBox.setChecked(false);
+                }
+                if (paperCheckBox.isChecked()) {
+                    paperCheckBox.setChecked(false);
+                }
+                if (locationCheckBox.isChecked()) {
+                    locationCheckBox.setChecked(false);
+                }
             }
         });
 
-        //set onClickListener for list button
+        //onClickListener for list button
         listButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Toast.makeText(MainActivity.this, "There are " + dataArray.size() +
                         " data objects in the list", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        //onClick Listener for send button
+        sendButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //This section emails the ArrayList using the message created by getDataList method of Data class
+                Intent intent = new Intent(Intent.ACTION_SENDTO);
+                intent.setData(Uri.parse("mailto: khash.021@gmail.com"));
+                intent.putExtra(Intent.EXTRA_SUBJECT, "Data collection: " + currentDateTime);
+                intent.putExtra(Intent.EXTRA_TEXT, Data.getDataList(dataArray));
+                if (intent.resolveActivity(getPackageManager()) != null) {
+                    startActivity(intent);
+                }
             }
         });
 
@@ -172,13 +183,13 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     @Override
     protected void onStop() {
         //This section emails the ArrayList using the message created by getDataList method of Data class
-        Intent intent = new Intent(Intent.ACTION_SENDTO);
-        intent.setData(Uri.parse("mailto: khash.021@gmail.com"));
-        intent.putExtra(Intent.EXTRA_SUBJECT, "Data collection: " + currentDateTime);
-        intent.putExtra(Intent.EXTRA_TEXT, Data.getDataList(dataArray));
-        if (intent.resolveActivity(getPackageManager()) != null) {
-            startActivity(intent);
-        }
+//        Intent intent = new Intent(Intent.ACTION_SENDTO);
+//        intent.setData(Uri.parse("mailto: khash.021@gmail.com"));
+//        intent.putExtra(Intent.EXTRA_SUBJECT, "Data collection: " + currentDateTime);
+//        intent.putExtra(Intent.EXTRA_TEXT, Data.getDataList(dataArray));
+//        if (intent.resolveActivity(getPackageManager()) != null) {
+//            startActivity(intent);
+//        }
         //Disconnect the client
         mGoogleApiClient.disconnect();
         super.onStop();

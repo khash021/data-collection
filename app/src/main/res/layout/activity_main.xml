@@ -11,18 +11,8 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="#000000"
-        android:textStyle="bold"
-        android:textSize="18sp"
-        android:text="Collect data"
-        android:padding="20dp"
-        android:layout_gravity="center_horizontal"/>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:text="Select all that apply"
+        android:text="Location"
         android:layout_marginBottom="6dp"/>
 
     <RelativeLayout
@@ -30,36 +20,37 @@
         android:layout_height="wrap_content"
         >
 
-        <Button
-            android:id="@+id/location_button"
+        <TextView
+            android:id="@+id/txt_location"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Get Location"
+            android:layout_height="36dp"
+            android:layout_gravity="center"
             android:paddingLeft="24dp"
             android:paddingRight="24dp"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="6dp"
             android:layout_marginBottom="6dp"
             android:layout_centerHorizontal="true"
             />
+
 
         <CheckBox
             android:id="@+id/checkbox_location"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignBaseline="@+id/location_button"
-            android:layout_toEndOf="@+id/location_button"
-            android:layout_toRightOf="@+id/location_button"
+            android:layout_alignBaseline="@+id/txt_location"
+            android:layout_toEndOf="@+id/txt_location"
+            android:layout_toRightOf="@+id/txt_location"
             android:text="Got it!" />
 
     </RelativeLayout>
 
-    <TextView
-        android:id="@+id/txt_location"
-        android:layout_width="wrap_content"
-        android:layout_height="36dp"
-        android:layout_gravity="center"
-        />
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:text="Select all that apply"
+        android:layout_marginBottom="6dp"/>
     <CheckBox
         android:id="@+id/checkbox_garbage"
         android:layout_width="match_parent"
@@ -92,6 +83,15 @@
         android:layout_marginTop="6dp"
         android:layout_marginBottom="6dp"
         android:layout_gravity="center_horizontal"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_gravity="center_horizontal"
+        android:background="#000000"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="4dp"/>
 
     <Button
         android:id="@+id/reset_button"
@@ -109,7 +109,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:text="ArrayList number"/>
+        android:text="Data points"/>
+    <Button
+        android:id="@+id/send_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:text="Upload data"/>
 
 
 

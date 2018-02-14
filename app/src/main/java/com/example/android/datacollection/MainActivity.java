@@ -1,7 +1,9 @@
 package com.example.android.datacollection;
 
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -18,6 +20,11 @@ import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+
 public class MainActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks,
             GoogleApiClient.OnConnectionFailedListener, LocationListener {
 
@@ -30,6 +37,15 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     //LocationRequest object
     private LocationRequest mLocationRequest;
     private TextView locationOutput;
+    //ArrayList for holding the data
+    ArrayList<Data> dataArray = new ArrayList<>();
+    //Data object
+    Data data = new Data();
+    //Location data
+    double lat, lon;
+    //Date and time format and date instance
+    final DateFormat dateFormat = new SimpleDateFormat("EEE, MMM.dd.yyyy 'at' HH:mm");
+    final String currentDateTime = dateFormat.format(Calendar.getInstance().getTime());
 
 
     @Override
@@ -67,6 +83,9 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         //location button
         Button locationButton = findViewById(R.id.location_button);
 
+        //ArrayList button
+        Button listButton = findViewById(R.id.list_button);
+
         //set on click listener for reset button
         resetButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -103,10 +122,26 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         submitButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                data = new Data();
+                data.garbage = garbageCheckBox.isChecked();
+                data.container = containerCheckBox.isChecked();
+                data.container = containerCheckBox.isChecked();
+                data.lat = lat;
+                data.lon = lon;
+                dataArray.add(data);
 
                 //for now only a toast message
                 Toast.makeText(MainActivity.this, "Not functional yet :)",
                         Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        //set onClickListener for list button
+        listButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(MainActivity.this, "There are " + dataArray.size() +
+                        " data objects in the list", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -136,6 +171,14 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
     @Override
     protected void onStop() {
+        //This section emails the ArrayList using the message created by getDataList method of Data class
+        Intent intent = new Intent(Intent.ACTION_SENDTO);
+        intent.setData(Uri.parse("mailto: khash.021@gmail.com"));
+        intent.putExtra(Intent.EXTRA_SUBJECT, "Data collection: " + currentDateTime);
+        intent.putExtra(Intent.EXTRA_TEXT, Data.getDataList(dataArray));
+        if (intent.resolveActivity(getPackageManager()) != null) {
+            startActivity(intent);
+        }
         //Disconnect the client
         mGoogleApiClient.disconnect();
         super.onStop();
@@ -180,6 +223,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         Log.d(TAG, "onLocationChanged() called");
         Log.i(TAG, "Location: " + location.toString());
         locationCheckBox.setChecked(true);
+        lat = location.getLatitude();
+        lon = location.getLongitude();
         locationOutput.setText("Latitude: "+Double.toString(location.getLatitude())+
                 "\nLongitude: "+Double.toString(location.getLongitude()));
     } //onLocationChanged

@@ -23,7 +23,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:text="Select all that apply"
-        android:layout_marginBottom="16dp"/>
+        android:layout_marginBottom="6dp"/>
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -80,7 +80,7 @@
         android:layout_height="wrap_content"
         android:text="Paper"
         android:layout_marginLeft="36dp"
-        android:layout_marginBottom="12dp"/>
+        android:layout_marginBottom="6dp"/>
 
     <Button
         android:id="@+id/submit_button"
@@ -89,8 +89,8 @@
         android:text="Submit"
         android:paddingLeft="24dp"
         android:paddingRight="24dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginBottom="16dp"
+        android:layout_marginTop="6dp"
+        android:layout_marginBottom="6dp"
         android:layout_gravity="center_horizontal"/>
 
     <Button
@@ -100,9 +100,16 @@
         android:text="Reset"
         android:paddingLeft="24dp"
         android:paddingRight="24dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginBottom="16dp"
+        android:layout_marginTop="6dp"
+        android:layout_marginBottom="6dp"
         android:layout_gravity="center_horizontal"/>
+
+    <Button
+        android:id="@+id/list_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:text="ArrayList number"/>
 
 
 

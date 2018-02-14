@@ -202,6 +202,22 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     } //onStop
 
     @Override
+    protected void onPause() {
+        Log.d(TAG, "Paused");
+        //Disconnect the client on pause
+        mGoogleApiClient.disconnect();
+        super.onPause();
+    } //onPause
+
+    @Override
+    protected void onResume() {
+        Log.d(TAG, "Resumed");
+        //Re-connect the client on resume
+        mGoogleApiClient.connect();
+        super.onResume();
+    } //onResume
+
+    @Override
     public void onConnected(Bundle bundle) {
         Log.d(TAG, "onConnected() called");
 
@@ -245,7 +261,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         locationOutput.setText("Latitude: "+Double.toString(location.getLatitude())+
                 "\nLongitude: "+Double.toString(location.getLongitude()));
     } //onLocationChanged
-
 
 
     @Override

@@ -106,13 +106,19 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         submitButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                data = new Data();
-                data.garbage = garbageCheckBox.isChecked();
-                data.container = containerCheckBox.isChecked();
-                data.container = containerCheckBox.isChecked();
-                data.lat = lat;
-                data.lon = lon;
-                dataArray.add(data);
+                if (locationCheckBox.isChecked()) {
+                    data = new Data();
+                    data.garbage = garbageCheckBox.isChecked();
+                    data.container = containerCheckBox.isChecked();
+                    data.container = containerCheckBox.isChecked();
+                    data.lat = lat;
+                    data.lon = lon;
+                    dataArray.add(data);
+                } else {
+                    Toast.makeText(MainActivity.this, "Location is not aquired yet, " +
+                    "please wait for the location check box and try again", Toast.LENGTH_SHORT)
+                            .show();
+                }
 
                 //for now only a toast message
                 Toast.makeText(MainActivity.this, "Added to the list",

@@ -113,17 +113,19 @@
         android:layout_marginBottom="6dp"
         android:layout_gravity="center_horizontal"/>
 
-    <Button
-        android:id="@+id/list_button"
+    <TextView
+        android:id="@+id/data_counter"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="20dp"
         android:layout_gravity="center_horizontal"
-        android:text="Data points"/>
+        android:hint="Data points"/>
+
     <Button
         android:id="@+id/send_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
+        android:layout_marginTop="6dp"
         android:text="Upload data"/>
 
 

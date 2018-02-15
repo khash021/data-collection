@@ -75,12 +75,15 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         final CheckBox paperCheckBox = findViewById(R.id.checkbox_paper);
         final CheckBox locationCheckBox = findViewById(R.id.checkbox_location);
         final EditText commentText = findViewById(R.id.comment_text);
+        final TextView dataCounter = findViewById(R.id.data_counter);
 
         //Buttons
         Button resetButton = findViewById(R.id.reset_button);
         Button submitButton = findViewById(R.id.submit_button);
-        Button listButton = findViewById(R.id.list_button);
+//        Button listButton = findViewById(R.id.list_button);
         Button sendButton = findViewById(R.id.send_button);
+
+        dataCounter.setText("Current data points: " + dataArray.size());
 
         //onClick listener for reset button
         resetButton.setOnClickListener(new View.OnClickListener() {
@@ -124,8 +127,9 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                 }
 
                 //for now only a toast message
-                Toast.makeText(MainActivity.this, "Added to the list",
-                        Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, "Added to the list.\n Current " +
+                        "number of data: " + dataArray.size(), Toast.LENGTH_SHORT).show();
+                dataCounter.setText("Current data points: " + dataArray.size());
                 if (garbageCheckBox.isChecked()) {
                     garbageCheckBox.setChecked(false);
                 }
@@ -144,14 +148,14 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             }
         });
 
-        //onClickListener for list button
-        listButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Toast.makeText(MainActivity.this, "There are " + dataArray.size() +
-                        " data objects in the list", Toast.LENGTH_SHORT).show();
-            }
-        });
+//        //onClickListener for list button
+//        listButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                Toast.makeText(MainActivity.this, "There are " + dataArray.size() +
+//                        " data objects in the list", Toast.LENGTH_SHORT).show();
+//            }
+//        });
 
         //onClick Listener for send button
         sendButton.setOnClickListener(new View.OnClickListener() {

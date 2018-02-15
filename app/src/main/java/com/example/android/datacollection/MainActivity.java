@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -73,6 +74,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         final CheckBox containerCheckBox = findViewById(R.id.checkbox_container);
         final CheckBox paperCheckBox = findViewById(R.id.checkbox_paper);
         final CheckBox locationCheckBox = findViewById(R.id.checkbox_location);
+        final EditText commentText = findViewById(R.id.comment_text);
 
         //Buttons
         Button resetButton = findViewById(R.id.reset_button);
@@ -113,11 +115,12 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                     data.container = containerCheckBox.isChecked();
                     data.lat = lat;
                     data.lon = lon;
+                    data.message = commentText.getText().toString();
                     dataArray.add(data);
                 } else {
-                    Toast.makeText(MainActivity.this, "Location is not aquired yet, " +
-                    "please wait for the location check box and try again", Toast.LENGTH_SHORT)
-                            .show();
+                    Toast.makeText(MainActivity.this, "Location is not acquired yet, "
+                            + "please wait for the location check box and try again",
+                            Toast.LENGTH_SHORT).show();
                 }
 
                 //for now only a toast message
@@ -134,6 +137,9 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                 }
                 if (locationCheckBox.isChecked()) {
                     locationCheckBox.setChecked(false);
+                }
+                if (commentText.getText().toString().length() > 0) {
+                    commentText.setText("");
                 }
             }
         });

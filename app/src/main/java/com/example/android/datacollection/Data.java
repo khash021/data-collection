@@ -18,6 +18,7 @@ public class Data {
     boolean garbage = false;
     boolean container = false;
     boolean paper = false;
+    String message = "";
 
     //default constructor
     Data(){}
@@ -28,15 +29,17 @@ public class Data {
         String list = "";
         Data data = new Data();
         int g, c, p;
+        String m;
         for (int i=0; i<dataArray.size(); i++ ) {
             data = dataArray.get(i);
             //sets the value of g (garbage to 1 if the boolean value is true, and 0 if false
             g = (data.garbage) ? 1:0;
             c = (data.container) ? 1:0;
             p = (data.paper) ? 1:0;
-            list += "\n" + Integer.toString(i) + " ; " + data.lat + " : " + data.lon + " ; " +
+            m = data.message;
+            list += "\n" + Integer.toString(i) + " : " + data.lat + " : " + data.lon + " : " +
                     Integer.toString(g) + " : " + Integer.toString(c) + " : " +
-                    Integer.toString(p) + " .";
+                    Integer.toString(p) + " : " + m ;
         }
         return list;
     }

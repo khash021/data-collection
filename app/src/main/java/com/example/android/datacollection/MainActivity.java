@@ -1,6 +1,8 @@
 package com.example.android.datacollection;
 
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -8,10 +10,14 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.example.android.datacollection.Database.DataContract;
+import com.example.android.datacollection.Database.DataDbHelper;
+
 public class MainActivity extends AppCompatActivity  {
 
     //Variables
     private final String TAG = "Main Activity";
+    private DataDbHelper mDbHelper;
 
 
     @Override
@@ -20,7 +26,6 @@ public class MainActivity extends AppCompatActivity  {
         Log.d(TAG, "onCreate() called");
         setContentView(R.layout.activity_main);
 
-        TextView dataCounter = findViewById(R.id.data_counter);
 
         //Buttons
         Button enterDataButton = findViewById(R.id.enter_data);
@@ -37,14 +42,14 @@ public class MainActivity extends AppCompatActivity  {
             }
         }); //onClickListener
 
+        // To access our database, we instantiate our subclass of SQLiteOpenHelper
+        // and pass the context, which is the current activity.
+        mDbHelper = new DataDbHelper(this);
+
 
 
     } //OnCreate
 
-
-    private void displayDatabaseInfo(){
-
-    }//displayDatabaseInfo
 
 
     @Override
@@ -69,6 +74,33 @@ public class MainActivity extends AppCompatActivity  {
         displayDatabaseInfo();
         super.onResume();
     } //onResume
+
+    private void displayDatabaseInfo(){
+
+        // Create and/or open a database to read from it
+        SQLiteDatabase db = mDbHelper.getReadableDatabase();
+
+        String[] projection = {DataContract.DataEntry._ID};
+
+        Cursor cursor = db.query(
+                DataContract.DataEntry.TABLE_NAME,
+                projection,
+                null,
+                null,
+                null,
+                null,
+                null);
+
+        TextView counterTextView  = (TextView) findViewById(R.id.data_counter);
+
+        try {
+            counterTextView.setText("Current number of data points: " + Integer.toString(cursor.getCount()));
+        } finally {
+            cursor.close();
+        }
+    }
+
+
 
 
 

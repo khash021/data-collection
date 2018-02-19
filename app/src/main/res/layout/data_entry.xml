@@ -99,6 +99,13 @@
         android:layout_marginTop="4dp"
         android:layout_marginBottom="4dp"/>
 
+    <TextView
+        android:id="@+id/data_counter"
+        android:layout_width="wrap_content"
+        android:layout_height="20dp"
+        android:layout_gravity="center_horizontal"
+        android:text="Current number of data points: "/>
+
     <Button
         android:id="@+id/reset_button"
         android:layout_width="wrap_content"

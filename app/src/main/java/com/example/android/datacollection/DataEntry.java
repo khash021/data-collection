@@ -1,12 +1,14 @@
 package com.example.android.datacollection;
 
+import android.content.ContentValues;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -14,6 +16,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.android.datacollection.Database.DataContract;
+import com.example.android.datacollection.Database.DataDbHelper;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
@@ -54,6 +58,10 @@ public class DataEntry extends AppCompatActivity implements GoogleApiClient.Conn
     final String currentDateTime = dateFormat.format(Calendar.getInstance().getTime());
 
 
+    CheckBox mGarbageCheckBox, mContainerCheckBox, mPaperCheckBox, mLocationCheckBox;
+    EditText mCommentText;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -75,11 +83,11 @@ public class DataEntry extends AppCompatActivity implements GoogleApiClient.Conn
         locationOutput = findViewById(R.id.txt_location);
 
         //creates variables for the checkboxes
-        final CheckBox garbageCheckBox = findViewById(R.id.checkbox_garbage);
-        final CheckBox containerCheckBox = findViewById(R.id.checkbox_container);
-        final CheckBox paperCheckBox = findViewById(R.id.checkbox_paper);
-        final CheckBox locationCheckBox = findViewById(R.id.checkbox_location);
-        final EditText commentText = findViewById(R.id.comment_text);
+        mGarbageCheckBox = findViewById(R.id.checkbox_garbage);
+        mContainerCheckBox = findViewById(R.id.checkbox_container);
+        mPaperCheckBox = findViewById(R.id.checkbox_paper);
+        mLocationCheckBox = findViewById(R.id.checkbox_location);
+        mCommentText = findViewById(R.id.comment_text);
 
         //Buttons
         Button resetButton = findViewById(R.id.reset_button);
@@ -92,20 +100,20 @@ public class DataEntry extends AppCompatActivity implements GoogleApiClient.Conn
             public void onClick(View view) {
 
                 //clears all the checkboxes
-                if (garbageCheckBox.isChecked()) {
-                    garbageCheckBox.setChecked(false);
+                if (mGarbageCheckBox.isChecked()) {
+                    mGarbageCheckBox.setChecked(false);
                 }
-                if (containerCheckBox.isChecked()) {
-                    containerCheckBox.setChecked(false);
+                if (mContainerCheckBox.isChecked()) {
+                    mContainerCheckBox.setChecked(false);
                 }
-                if (paperCheckBox.isChecked()) {
-                    paperCheckBox.setChecked(false);
+                if (mPaperCheckBox.isChecked()) {
+                    mPaperCheckBox.setChecked(false);
                 }
-                if (locationCheckBox.isChecked()) {
-                    locationCheckBox.setChecked(false);
+                if (mLocationCheckBox.isChecked()) {
+                    mLocationCheckBox.setChecked(false);
                 }
-                if (commentText.getText().toString().length() > 0) {
-                    commentText.setText("");
+                if (mCommentText.getText().toString().length() > 0) {
+                    mCommentText.setText("");
                 }
             }
         });
@@ -116,39 +124,36 @@ public class DataEntry extends AppCompatActivity implements GoogleApiClient.Conn
         submitButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (locationCheckBox.isChecked()) {
-                    data = new Data();
-                    data.garbage = garbageCheckBox.isChecked();
-                    data.container = containerCheckBox.isChecked();
-                    data.container = containerCheckBox.isChecked();
-                    data.lat = lat;
-                    data.lon = lon;
-                    data.message = commentText.getText().toString();
-                    dataArray.add(data);
+                if (mLocationCheckBox.isChecked()) {
+//                    data = new Data();
+//                    data.garbage = garbageCheckBox.isChecked();
+//                    data.container = containerCheckBox.isChecked();
+//                    data.container = containerCheckBox.isChecked();
+//                    data.lat = lat;
+//                    data.lon = lon;
+//                    data.message = commentText.getText().toString();
+//                    dataArray.add(data);
+                    insertData();
                 } else {
                     Toast.makeText(DataEntry.this, "Location is not acquired yet, "
                                     + "please wait for the location check box and try again",
                             Toast.LENGTH_SHORT).show();
                 }
 
-                //for now only a toast message
-                Toast.makeText(DataEntry.this, "Added to the list.\n Current " +
-                        "number of data: " + dataArray.size(), Toast.LENGTH_SHORT).show();
-
-                if (garbageCheckBox.isChecked()) {
-                    garbageCheckBox.setChecked(false);
+                if (mGarbageCheckBox.isChecked()) {
+                    mGarbageCheckBox.setChecked(false);
                 }
-                if (containerCheckBox.isChecked()) {
-                    containerCheckBox.setChecked(false);
+                if (mContainerCheckBox.isChecked()) {
+                    mContainerCheckBox.setChecked(false);
                 }
-                if (paperCheckBox.isChecked()) {
-                    paperCheckBox.setChecked(false);
+                if (mPaperCheckBox.isChecked()) {
+                    mPaperCheckBox.setChecked(false);
                 }
-                if (locationCheckBox.isChecked()) {
-                    locationCheckBox.setChecked(false);
+                if (mLocationCheckBox.isChecked()) {
+                    mLocationCheckBox.setChecked(false);
                 }
-                if (commentText.getText().toString().length() > 0) {
-                    commentText.setText("");
+                if (mCommentText.getText().toString().length() > 0) {
+                    mCommentText.setText("");
                 }
             }
         });
@@ -171,12 +176,121 @@ public class DataEntry extends AppCompatActivity implements GoogleApiClient.Conn
         }
     } //onRequestPermissionResult
 
+    /**
+     * Temporary helper method to display information in the onscreen TextView about the number of
+     * Data points in our database
+     */
+    private void displayDatabaseInfo() {
+
+
+        // Create database helper
+        DataDbHelper mDbHelper = new DataDbHelper(this);
+
+        // Create and/or open a database to read from it
+        SQLiteDatabase db = mDbHelper.getReadableDatabase();
+
+        //this is what we are going to pass into the Query method. This String is similiar
+        //to the statement after SELECT, we tell it which columns we want, here we want everything
+        String[] projection = {DataContract.DataEntry._ID};
+
+        //Now we need to create a Cursor object (Cursor contains row and columns from the database
+        //based on the input arguments we have given it
+        Cursor cursor = db.query(
+                DataContract.DataEntry.TABLE_NAME,
+                projection,
+                null,
+                null,
+                null,
+                null,
+                null);
+
+        TextView counterTextView = findViewById(R.id.data_counter);
+
+        try {
+            counterTextView.setText("Current number of data: " + cursor.getCount());
+
+        } finally {
+            // Always close the cursor when you're done reading from it. This releases all its
+            // resources and makes it invalid.
+            cursor.close();
+        } //finally
+
+
+    }//displayDatabaseInfo
+
+    /**
+     * Get user input from editor and save new pet into database.
+     */
+    private void insertData() {
+
+        //Setting up the Checkboxes variables
+        mGarbageCheckBox = findViewById(R.id.checkbox_garbage);
+        mContainerCheckBox = findViewById(R.id.checkbox_container);
+        mPaperCheckBox = findViewById(R.id.checkbox_paper);
+        mLocationCheckBox = findViewById(R.id.checkbox_location);
+        mCommentText = findViewById(R.id.comment_text);
+
+        //Converting boolean from our checkboxes into integers for the database
+        int mGarbage, mContainer, mPaper;
+        if (mGarbageCheckBox.isChecked()) {
+            mGarbage = 1;
+        } else {
+            mGarbage = 0;
+        }
+        if (mContainerCheckBox.isChecked()) {
+            mContainer = 1;
+        } else {
+            mContainer = 0;
+        }
+        if (mPaperCheckBox.isChecked()) {
+            mPaper = 1;
+        } else {
+            mPaper = 0;
+        }
+
+        //Get the text from comments edit text
+        String mComment = mCommentText.getText().toString().trim();
+
+        // Create database helper
+        DataDbHelper mDbHelper = new DataDbHelper(this);
+
+        // Gets the database in write mode
+        SQLiteDatabase db = mDbHelper.getWritableDatabase();
+
+        // Create a new map of values, where column names are the keys
+        //and Toto's pet attributes are the values.
+        ContentValues values = new ContentValues();
+        values.put(DataContract.DataEntry.COLUMN_LOCATION_LATITUDE, lat);
+        values.put(DataContract.DataEntry.COLUMN_LOCATION_LONGITUDE, lon);
+        values.put(DataContract.DataEntry.COLUMN_LOCATION_GARBAGE, mGarbage);
+        values.put(DataContract.DataEntry.COLUMN_LOCATION_CONTAINER, mContainer);
+        values.put(DataContract.DataEntry.COLUMN_LOCATION_PAPER, mPaper);
+        values.put(DataContract.DataEntry.COLUMN_LOCATION_COMMENT, mComment);
+
+        // we add the new pet to the database by insert method and this return a double which is the
+        //id of that row.
+        long newRowId = db.insert(DataContract.DataEntry.TABLE_NAME, null, values);
+
+        //make a toast message showing the id of the added
+        if (newRowId == -1) {
+            //insert return -1 if there was an error and this means the pet was NOT added
+            Toast.makeText(this, "Error with saving location.", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(this, "Location saved with id: " + newRowId, Toast.LENGTH_SHORT )
+                    .show();
+        }
+
+        displayDatabaseInfo();
+
+    }//insertData
+
     @Override
     protected void onStart() {
         Log.d(TAG, "Started");
         super.onStart();
         //Connect client
         mGoogleApiClient.connect();
+        displayDatabaseInfo();
     } //onStart
 
     @Override
@@ -200,6 +314,7 @@ public class DataEntry extends AppCompatActivity implements GoogleApiClient.Conn
         Log.d(TAG, "Resumed");
         //Re-connect the client on resume
         mGoogleApiClient.connect();
+        displayDatabaseInfo();
         super.onResume();
     } //onResume
 

@@ -20,7 +20,7 @@ public class DataContract {
                 and not the actual data type of the database in the corresponding column.
          */
 
-        public static final String TABLE_NAME = "Location Data";
+        public static final String TABLE_NAME = "locations";
         /**
          * Unique ID number for the pet (only for use in the database table).
          *
@@ -32,14 +32,14 @@ public class DataContract {
          *
          * Type: REAL
          */
-        public final static String COLUMN_LOCATION_LATITUDE ="Latitude";
+        public final static String COLUMN_LOCATION_LATITUDE ="latitude";
 
         /**
          * Longitude of datapoint
          *
          * Type: REAL
          */
-        public final static String COLUMN_LOCATION_LONGITUDE = "Longitude";
+        public final static String COLUMN_LOCATION_LONGITUDE = "longitude";
 
         /**
          * Garbage
@@ -48,7 +48,7 @@ public class DataContract {
          *
          * Type: INTEGER
          */
-        public final static String COLUMN_LOCATION_GARBAGE = "Garbage";
+        public final static String COLUMN_LOCATION_GARBAGE = "garbage";
         /**
          * Container
          *
@@ -56,7 +56,7 @@ public class DataContract {
          *
          * Type: INTEGER
          */
-        public final static String COLUMN_LOCATION_CONTAINER = "Container";
+        public final static String COLUMN_LOCATION_CONTAINER = "container";
         /**
          * Paper
          *
@@ -64,14 +64,14 @@ public class DataContract {
          *
          * Type: INTEGER
          */
-        public final static String COLUMN_LOCATION_PAPER = "Paper";
+        public final static String COLUMN_LOCATION_PAPER = "paper";
 
         /**
          * Comments
          *
          * Type: TEXT
          */
-        public final static String COLUMN_LOCATION_COMMENT = "Comments";
+        public final static String COLUMN_LOCATION_COMMENT = "comments";
 
         /**
          * Possible values for the garbage, container, paper.

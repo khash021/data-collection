@@ -47,15 +47,12 @@ public class DataEntry extends AppCompatActivity implements GoogleApiClient.Conn
     //LocationRequest object
     private LocationRequest mLocationRequest;
     private TextView locationOutput;
-    //ArrayList for holding the data
-    ArrayList<Data> dataArray = new ArrayList<>();
+
     //Data object
     Data data = new Data();
     //Location data
     double lat, lon;
-    //Date and time format and date instance
-    final DateFormat dateFormat = new SimpleDateFormat("EEE, MMM.dd.yyyy 'at' HH:mm");
-    final String currentDateTime = dateFormat.format(Calendar.getInstance().getTime());
+
 
 
     CheckBox mGarbageCheckBox, mContainerCheckBox, mPaperCheckBox, mLocationCheckBox;
@@ -125,14 +122,7 @@ public class DataEntry extends AppCompatActivity implements GoogleApiClient.Conn
             @Override
             public void onClick(View view) {
                 if (mLocationCheckBox.isChecked()) {
-//                    data = new Data();
-//                    data.garbage = garbageCheckBox.isChecked();
-//                    data.container = containerCheckBox.isChecked();
-//                    data.container = containerCheckBox.isChecked();
-//                    data.lat = lat;
-//                    data.lon = lon;
-//                    data.message = commentText.getText().toString();
-//                    dataArray.add(data);
+                    insertArray();
                     insertData();
                 } else {
                     Toast.makeText(DataEntry.this, "Location is not acquired yet, "
@@ -205,9 +195,13 @@ public class DataEntry extends AppCompatActivity implements GoogleApiClient.Conn
                 null);
 
         TextView counterTextView = findViewById(R.id.data_counter);
+        TextView arrayCounterTextView = findViewById(R.id.data_array_counter);
 
         try {
-            counterTextView.setText("Current number of data: " + cursor.getCount());
+            counterTextView.setText("Current number of data-points in database: " +
+                    cursor.getCount());
+            arrayCounterTextView.setText("Current number of data-points in ArrayList: "
+                    + MainActivity.dataArray.size());
 
         } finally {
             // Always close the cursor when you're done reading from it. This releases all its
@@ -283,6 +277,24 @@ public class DataEntry extends AppCompatActivity implements GoogleApiClient.Conn
         displayDatabaseInfo();
 
     }//insertData
+
+    private void insertArray(){
+        //Setting up the Checkboxes variables
+        mGarbageCheckBox = findViewById(R.id.checkbox_garbage);
+        mContainerCheckBox = findViewById(R.id.checkbox_container);
+        mPaperCheckBox = findViewById(R.id.checkbox_paper);
+        mCommentText = findViewById(R.id.comment_text);
+
+        data = new Data();
+        data.garbage = mGarbageCheckBox.isChecked();
+        data.container = mContainerCheckBox.isChecked();
+        data.container = mPaperCheckBox.isChecked();
+        data.lat = lat;
+        data.lon = lon;
+        data.message = mCommentText.getText().toString();
+        MainActivity.dataArray.add(data);
+
+    }//insertArray
 
     @Override
     protected void onStart() {

@@ -37,7 +37,10 @@ public class Data {
             c = (data.container) ? 1:0;
             p = (data.paper) ? 1:0;
             m = data.message;
-            list += "\n" + Integer.toString(i) + " : " + data.lat + " : " + data.lon + " : " +
+            //Here I set the id (the one derived from i in the beginning of the list) to start from
+            // 1 (i.e. i+1) to conform with the database standard of the id0 is for the header and
+            //our data starts from 1.
+            list += "\n" + Integer.toString(i+1) + " : " + data.lat + " : " + data.lon + " : " +
                     Integer.toString(g) + " : " + Integer.toString(c) + " : " +
                     Integer.toString(p) + " : " + m ;
         }

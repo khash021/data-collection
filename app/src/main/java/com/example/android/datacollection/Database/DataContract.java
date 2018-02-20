@@ -22,7 +22,7 @@ public class DataContract {
 
         public static final String TABLE_NAME = "locations";
         /**
-         * Unique ID number for the pet (only for use in the database table).
+         * Unique ID number for the location (only for use in the database table).
          *
          * Type: INTEGER
          */

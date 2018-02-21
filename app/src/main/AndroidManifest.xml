@@ -33,6 +33,10 @@
             android:name="android.support.PARENT_ACTIVITY"
             android:value=".MainActivity" />
         </activity>
+        <provider
+            android:name=".Database.DataProvider"
+            android:authorities="com.example.android.datacollection"
+            android:exported="false" />
     </application>
 
 </manifest>

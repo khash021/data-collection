@@ -5,6 +5,7 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -23,11 +24,6 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
-
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
 
 /**
  * Created by Khashayar on 2/17/2018.
@@ -173,26 +169,19 @@ public class DataEntry extends AppCompatActivity implements GoogleApiClient.Conn
     private void displayDatabaseInfo() {
 
 
-        // Create database helper
-        DataDbHelper mDbHelper = new DataDbHelper(this);
-
-        // Create and/or open a database to read from it
-        SQLiteDatabase db = mDbHelper.getReadableDatabase();
-
-        //this is what we are going to pass into the Query method. This String is similiar
+        //this is what we are going to pass into the Query method. This String is similar
         //to the statement after SELECT, we tell it which columns we want, here we want everything
-        String[] projection = {DataContract.DataEntry._ID};
+        String[] projection = {
+                DataContract.DataEntry._ID,
+        };
 
-        //Now we need to create a Cursor object (Cursor contains row and columns from the database
-        //based on the input arguments we have given it
-        Cursor cursor = db.query(
-                DataContract.DataEntry.TABLE_NAME,
-                projection,
-                null,
-                null,
-                null,
-                null,
-                null);
+        Cursor cursor = getContentResolver().query(
+                DataContract.DataEntry.CONTENT_URI,     //The content Uri
+                projection,               //The columns to return for each row
+                null,            //Selection criteria
+                null,         //Selection criteria
+                null            //The sort order for returned rows
+        );
 
         TextView counterTextView = findViewById(R.id.data_counter);
         TextView arrayCounterTextView = findViewById(R.id.data_array_counter);
@@ -208,8 +197,6 @@ public class DataEntry extends AppCompatActivity implements GoogleApiClient.Conn
             // resources and makes it invalid.
             cursor.close();
         } //finally
-
-
     }//displayDatabaseInfo
 
     /**
@@ -245,12 +232,6 @@ public class DataEntry extends AppCompatActivity implements GoogleApiClient.Conn
         //Get the text from comments edit text
         String mComment = mCommentText.getText().toString().trim();
 
-        // Create database helper
-        DataDbHelper mDbHelper = new DataDbHelper(this);
-
-        // Gets the database in write mode
-        SQLiteDatabase db = mDbHelper.getWritableDatabase();
-
         // Create a new map of values, where column names are the keys
         //and Toto's pet attributes are the values.
         ContentValues values = new ContentValues();
@@ -261,19 +242,19 @@ public class DataEntry extends AppCompatActivity implements GoogleApiClient.Conn
         values.put(DataContract.DataEntry.COLUMN_LOCATION_PAPER, mPaper);
         values.put(DataContract.DataEntry.COLUMN_LOCATION_COMMENT, mComment);
 
-        // we add the new pet to the database by insert method and this return a double which is the
-        //id of that row.
-        long newRowId = db.insert(DataContract.DataEntry.TABLE_NAME, null, values);
+        // Insert a new pet into the provider, returning the content URI for the new pet.
+        Uri newUri = getContentResolver().insert(DataContract.DataEntry.CONTENT_URI, values);
 
-        //make a toast message showing the id of the added
-        if (newRowId == -1) {
-            //insert return -1 if there was an error and this means the pet was NOT added
-            Toast.makeText(this, "Error with saving location.", Toast.LENGTH_SHORT).show();
+        // Show a toast message depending on whether or not the insertion was successful
+        if (newUri == null) {
+            // If the new content URI is null, then there was an error with insertion.
+            Toast.makeText(this, "Error with saving location",
+                    Toast.LENGTH_SHORT).show();
         } else {
-            Toast.makeText(this, "Location saved with id: " + newRowId, Toast.LENGTH_SHORT )
-                    .show();
+            // Otherwise, the insertion was successful and we can display a toast.
+            Toast.makeText(this, "Location saved",
+                    Toast.LENGTH_SHORT).show();
         }
-
         displayDatabaseInfo();
 
     }//insertData

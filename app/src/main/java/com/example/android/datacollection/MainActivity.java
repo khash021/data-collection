@@ -27,7 +27,7 @@ public class MainActivity extends AppCompatActivity  {
     //ArrayList for holding the data
     static ArrayList<Data> dataArray = new ArrayList<>();
     //Date and time format and date instance
-    final DateFormat dateFormat = new SimpleDateFormat("EEE, MMM.dd.yyyy 'at' HH:mm");
+    final DateFormat dateFormat = new SimpleDateFormat("MM.dd.yyyy 'at' HH:mm:ss z");
     final String currentDateTime = dateFormat.format(Calendar.getInstance().getTime());
 
 
@@ -73,34 +73,17 @@ public class MainActivity extends AppCompatActivity  {
         deleteAllButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                /**
-                 * This is our format.
-                 * It return an integer with the number of rows deleted.
-                 *
-                 * whereClause: the optional WHERE clause to apply when deleting.
-                 *              Passing null will delete all rows.
-                 *
-                 * whereArgs: You may include ?s in the where clause, which will be replaced by the
-                 *              values from whereArgs. The values will be bound as Strings
-                 *
-                 * return: the number of rows affected if a whereClause is passed in, 0 otherwise.
-                 *          To remove all rows and get a count pass "1" as the whereClause.
-                 *
-                 *
-                 *  int delete (String table,
-                                String whereClause,
-                                String[] whereArgs)
-                 */
+
                 String whereClause = "1";
                 int result = getContentResolver().delete(DataContract.DataEntry.CONTENT_URI,
                         whereClause, null);
 
                 //We should be getting an integer with the number of deleted rows since we have
                 // passed in 1 as where clause
-                    Toast.makeText(MainActivity.this,
-                            "All rows in database have been deleted" +
-                            "\nnumber of deleted rows: " + result,
-                            Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this,
+                        "All rows in database have been deleted" +
+                                "\nnumber of deleted rows: " + result,
+                        Toast.LENGTH_SHORT).show();
                 displayDatabaseInfo();
 
             }

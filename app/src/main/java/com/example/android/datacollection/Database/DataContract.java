@@ -47,7 +47,7 @@ public class DataContract {
         public static final Uri CONTENT_URI = Uri.withAppendedPath(BASE_CONTENT_URI, PATH_LOCATIONS);
 
         /**
-         * The MIME type of the {@link #CONTENT_URI} for a list of pets.
+         * The MIME type of the {@link #CONTENT_URI} for a list of locations.
          */
         //we’re making use of the constants defined in the ContentResolver class:
         //CURSOR_DIR_BASE_TYPE (which maps to the constant "vnd.android.cursor.dir") and
@@ -56,7 +56,7 @@ public class DataContract {
                 ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_LOCATIONS;
 
         /**
-         * The MIME type of the {@link #CONTENT_URI} for a single pet.
+         * The MIME type of the {@link #CONTENT_URI} for a single location.
          */
         public static final String CONTENT_ITEM_TYPE =
                 ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_LOCATIONS;
@@ -90,7 +90,7 @@ public class DataContract {
         /**
          * Garbage
          *
-         * The only possible values are {@link #GARBAGE_TRUE}, {@link #GARBAGE_FALSE},
+         * The only possible values are: 0, and 1; false, and true respectively
          *
          * Type: INTEGER
          */
@@ -98,7 +98,7 @@ public class DataContract {
         /**
          * Container
          *
-         * The only possible values are {@link #CONTAINER_TRUE}, {@link #CONTAINER_FALSE},
+         * The only possible values are: 0, and 1; false, and true respectively
          *
          * Type: INTEGER
          */
@@ -106,7 +106,7 @@ public class DataContract {
         /**
          * Paper
          *
-         * The only possible values are {@link #PAPER_TRUE}, {@link #PAPER_FALSE},
+         * The only possible values are: 0, and 1; false, and true respectively
          *
          * Type: INTEGER
          */
@@ -120,14 +120,13 @@ public class DataContract {
         public final static String COLUMN_LOCATION_COMMENT = "comments";
 
         /**
-         * Possible values for the garbage, container, paper.
+         * Date
+         *
+         * the format = MM.dd.yyyy at hh:mm z (e.g. 02.28.2018 at 02:50 PST)
+         *
+         * Type: TEXT
          */
-        public static final int GARBAGE_TRUE = 1;
-        public static final int GARBAGE_FALSE = 0;
-        public static final int CONTAINER_TRUE = 1;
-        public static final int CONTAINER_FALSE = 0;
-        public static final int PAPER_TRUE = 1;
-        public static final int PAPER_FALSE = 0;
+        public final static String COLUMN_LOCATION_DATE = "date-time";
 
 
     }//DataEntry

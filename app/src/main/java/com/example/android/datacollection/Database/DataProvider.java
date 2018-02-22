@@ -119,7 +119,7 @@ public class DataProvider extends ContentProvider {
 
         }//switch
         return cursor;
-    }//onCreate
+    }//query
 
     /**
      * Insert new data into the provider with the given ContentValues.

@@ -1,9 +1,9 @@
 package com.example.android.datacollection;
 
+import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
@@ -18,7 +18,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.android.datacollection.Database.DataContract;
-import com.example.android.datacollection.Database.DataDbHelper;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
@@ -85,6 +84,7 @@ public class DataEntry extends AppCompatActivity implements GoogleApiClient.Conn
         //Buttons
         Button resetButton = findViewById(R.id.reset_button);
         Button submitButton = findViewById(R.id.submit_button);
+        Button undoButton = findViewById(R.id.undo_button);
 
 
         //onClick listener for reset button
@@ -120,29 +120,36 @@ public class DataEntry extends AppCompatActivity implements GoogleApiClient.Conn
                 if (mLocationCheckBox.isChecked()) {
                     insertArray();
                     insertData();
+                    if (mGarbageCheckBox.isChecked()) {
+                        mGarbageCheckBox.setChecked(false);
+                    }
+                    if (mContainerCheckBox.isChecked()) {
+                        mContainerCheckBox.setChecked(false);
+                    }
+                    if (mPaperCheckBox.isChecked()) {
+                        mPaperCheckBox.setChecked(false);
+                    }
+                    if (mLocationCheckBox.isChecked()) {
+                        mLocationCheckBox.setChecked(false);
+                    }
+                    if (mCommentText.getText().toString().length() > 0) {
+                        mCommentText.setText("");
+                    }
                 } else {
                     Toast.makeText(DataEntry.this, "Location is not acquired yet, "
                                     + "please wait for the location check box and try again",
                             Toast.LENGTH_SHORT).show();
                 }
-
-                if (mGarbageCheckBox.isChecked()) {
-                    mGarbageCheckBox.setChecked(false);
-                }
-                if (mContainerCheckBox.isChecked()) {
-                    mContainerCheckBox.setChecked(false);
-                }
-                if (mPaperCheckBox.isChecked()) {
-                    mPaperCheckBox.setChecked(false);
-                }
-                if (mLocationCheckBox.isChecked()) {
-                    mLocationCheckBox.setChecked(false);
-                }
-                if (mCommentText.getText().toString().length() > 0) {
-                    mCommentText.setText("");
-                }
             }
-        });
+        });//onClickListener - submit
+
+        undoButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                undo();
+
+            }
+        });//onClickListener - undo
 
 
     } //OnCreate
@@ -258,6 +265,43 @@ public class DataEntry extends AppCompatActivity implements GoogleApiClient.Conn
         displayDatabaseInfo();
 
     }//insertData
+
+    //This deletes the last input
+    public void undo(){
+        String[] projection = {
+                DataContract.DataEntry._ID
+        };
+
+        Cursor cursor = getContentResolver().query(
+                DataContract.DataEntry.CONTENT_URI,     //The content Uri
+                projection,               //The columns to return for each row
+                null,            //Selection criteria
+                null,         //Selection criteria
+                null            //The sort order for returned rows
+        );
+
+        int columnID = cursor.getColumnIndex(DataContract.DataEntry._ID);
+        cursor.moveToLast();
+
+        int lastRow = cursor.getInt(columnID);
+        long id = lastRow;
+
+        //Creating a correct URI pointing to the last row
+        Uri uri = ContentUris.withAppendedId(DataContract.DataEntry.CONTENT_URI, id);
+
+
+        int result = getContentResolver().delete(uri, null , null);
+
+        if (result == 0){
+            Toast.makeText(this,
+                    "Error with deleting the last entry", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(this,
+                    "Last entry has been deleted ", Toast.LENGTH_SHORT).show();
+            displayDatabaseInfo();
+        }
+
+    }//undo
 
     private void insertArray(){
         //Setting up the Checkboxes variables

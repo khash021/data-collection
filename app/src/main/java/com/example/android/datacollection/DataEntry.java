@@ -41,21 +41,17 @@ public class DataEntry extends AppCompatActivity implements GoogleApiClient.Conn
 
     //Tag to be used for all our logs
     private final String TAG = "Data Entry";
-    //To be used by location services permission request
-    private static final int REQUEST_LOCATION = 0;
     //The TextView that displays the current location
     private GoogleApiClient mGoogleApiClient;
     //LocationRequest object
     private LocationRequest mLocationRequest;
-    private TextView locationOutput;
 
     //Date and time format and date instance
     final DateFormat dateFormat = new SimpleDateFormat("MM.dd.yyyy 'at' HH:mm:ss z");
     final String currentDateTime = dateFormat.format(Calendar.getInstance().getTime());
 
-
     //Location data
-    double lat, lon;
+    private double mLat, mLon;
 
 
 
@@ -80,8 +76,7 @@ public class DataEntry extends AppCompatActivity implements GoogleApiClient.Conn
                 //Finally build the ApiClient
                 .build();
 
-        //Text box to show location
-        locationOutput = findViewById(R.id.txt_location);
+
 
         //creates variables for the checkboxes
         mGarbageCheckBox = findViewById(R.id.checkbox_garbage);
@@ -118,7 +113,7 @@ public class DataEntry extends AppCompatActivity implements GoogleApiClient.Conn
                     mCommentText.setText("");
                 }
             }
-        });
+        });//Reset - onClickListener
 
 
 
@@ -151,6 +146,7 @@ public class DataEntry extends AppCompatActivity implements GoogleApiClient.Conn
             }
         });//onClickListener - submit
 
+        //Undo onClickListener
         undoButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -162,20 +158,6 @@ public class DataEntry extends AppCompatActivity implements GoogleApiClient.Conn
 
     } //OnCreate
 
-    //This is the popup notification when you first run the app and you give permission for this app
-    //to use the phone's location (Android's default pop-up.
-    // Request Permissions
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        if (requestCode == REQUEST_LOCATION) {
-            if(grantResults.length == 1
-                    && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                // We can now safely use the API we requested access to
-                LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
-            } else {
-                Log.i(TAG, "Permission was denied or request was cancelled");
-            }
-        }
-    } //onRequestPermissionResult
 
     /**
      * Temporary helper method to display information in the onscreen TextView about the number of
@@ -247,8 +229,8 @@ public class DataEntry extends AppCompatActivity implements GoogleApiClient.Conn
         // Create a new map of values, where column names are the keys
         //and Toto's pet attributes are the values.
         ContentValues values = new ContentValues();
-        values.put(LocationEntry.COLUMN_LOCATION_LATITUDE, lat);
-        values.put(LocationEntry.COLUMN_LOCATION_LONGITUDE, lon);
+        values.put(LocationEntry.COLUMN_LOCATION_LATITUDE, mLat);
+        values.put(LocationEntry.COLUMN_LOCATION_LONGITUDE, mLon);
         values.put(LocationEntry.COLUMN_LOCATION_GARBAGE, mGarbage);
         values.put(LocationEntry.COLUMN_LOCATION_CONTAINER, mContainer);
         values.put(LocationEntry.COLUMN_LOCATION_PAPER, mPaper);
@@ -367,7 +349,7 @@ public class DataEntry extends AppCompatActivity implements GoogleApiClient.Conn
             // Check Permissions Now
             ActivityCompat.requestPermissions(this,
                     new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
-                    REQUEST_LOCATION);
+                    MainActivity.REQUEST_LOCATION);
         } else {
             //Start requesting location updates
             LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
@@ -375,15 +357,18 @@ public class DataEntry extends AppCompatActivity implements GoogleApiClient.Conn
     } //onConnected
 
     //This is where we define what to be done when the location changes (based on the interval we set
-    //in onConnected. Here for example we update the lat/log in the TextView
+    //in onConnected. Here for example we update the mLat/log in the TextView
     @Override
     public void onLocationChanged(Location location) {
         CheckBox locationCheckBox = findViewById(R.id.checkbox_location);
         Log.d(TAG, "onLocationChanged() called");
         Log.i(TAG, "Location: " + location.toString());
         locationCheckBox.setChecked(true);
-        lat = location.getLatitude();
-        lon = location.getLongitude();
+        mLat = location.getLatitude();
+        mLon = location.getLongitude();
+
+        //Text box to show location
+        TextView locationOutput = findViewById(R.id.txt_location);
         locationOutput.setText("Latitude: "+Double.toString(location.getLatitude())+
                 "\nLongitude: "+Double.toString(location.getLongitude()));
     } //onLocationChanged

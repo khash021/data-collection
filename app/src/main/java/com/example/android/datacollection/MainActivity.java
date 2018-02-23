@@ -1,8 +1,11 @@
 package com.example.android.datacollection;
 
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -10,14 +13,16 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.android.datacollection.Database.LocationContract.LocationEntry;
 import com.example.android.datacollection.Database.DataDbHelper;
+import com.example.android.datacollection.Database.LocationContract.LocationEntry;
 
 public class MainActivity extends AppCompatActivity  {
 
     //Variables
     //Tag for logging
     private final String TAG = "Main Activity";
+    //Request location constant for location permission
+    static final int REQUEST_LOCATION = 0;
     //Declaring the Database helper object
     private DataDbHelper mDbHelper;
 
@@ -29,7 +34,26 @@ public class MainActivity extends AppCompatActivity  {
         Log.d(TAG, "onCreate() called");
         setContentView(R.layout.activity_main);
 
-        //TODO: Move the permission here from the LocationEntry
+        /**
+         *  This is what gets the permission for the location on start up.
+         *  Notice: that this activity is not using the location, but we check this here
+         *          so we won't need to deal with the permission in the Location activity
+         */
+        // Here, thisActivity is the current activity
+        if (ContextCompat.checkSelfPermission(this,
+                android.Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+
+
+            // No explanation needed; request the permission
+            ActivityCompat.requestPermissions(this,
+                    new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
+                    REQUEST_LOCATION);
+
+            // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
+            // app-defined int constant. The callback method gets the
+            // result of the request.
+        } //permission
 
 
         //Enter data button

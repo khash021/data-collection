@@ -259,6 +259,8 @@ public class DataEntry extends AppCompatActivity implements GoogleApiClient.Conn
                 LocationEntry._ID
         };
 
+        //Query the database with ID as projection. We will use this to find out the ID
+        //of the last item in the database to be used for deleting
         Cursor cursor = getContentResolver().query(
                 LocationEntry.CONTENT_URI,     //The content Uri
                 projection,               //The columns to return for each row
@@ -267,18 +269,28 @@ public class DataEntry extends AppCompatActivity implements GoogleApiClient.Conn
                 null            //The sort order for returned rows
         );
 
-        int columnID = cursor.getColumnIndex(LocationEntry._ID);
-        cursor.moveToLast();
+        //Here we need to check and see if there is at least one item in the database; otherwise
+        //if we try to delete the last row which doesnt exist, the app crashes.
+        if (cursor.getCount() <= 0) {
+            Toast.makeText(this, "Database is empty.", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
+        //get the index of the ID column
+        int columnID = cursor.getColumnIndex(LocationEntry._ID);
+        //Move the cursor to the last row
+        cursor.moveToLast();
+        //get the ID of the last item
         int lastRow = cursor.getInt(columnID);
+        //convert to double to be Appended in Uri
         long id = lastRow;
 
         //Creating a correct URI pointing to the last row
         Uri uri = ContentUris.withAppendedId(LocationEntry.CONTENT_URI, id);
 
-
+        //delete will return an integer with the number of rows deleted
         int result = getContentResolver().delete(uri, null , null);
-
+        //If the result is zero, that means there was an error
         if (result == 0){
             Toast.makeText(this,
                     "Error with deleting the last entry", Toast.LENGTH_SHORT).show();

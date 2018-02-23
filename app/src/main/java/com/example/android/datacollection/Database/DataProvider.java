@@ -9,6 +9,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.util.Log;
 
+import com.example.android.datacollection.Database.LocationContract.LocationEntry;
+
 /**
  * Created by Khashayar on 2/20/2018.
  */
@@ -43,8 +45,8 @@ public class DataProvider extends ContentProvider {
         // should recognize. All paths added to the UriMatcher have a corresponding code to return
         // when a match is found.
 
-        sUriMatcher.addURI(DataContract.CONTENT_AUTHORITY, DataContract.PATH_LOCATIONS, LOCATIONS);
-        sUriMatcher.addURI(DataContract.CONTENT_AUTHORITY, DataContract.PATH_LOCATIONS + "/#", LOCATION_ID);
+        sUriMatcher.addURI(LocationContract.CONTENT_AUTHORITY, LocationContract.PATH_LOCATIONS, LOCATIONS);
+        sUriMatcher.addURI(LocationContract.CONTENT_AUTHORITY, LocationContract.PATH_LOCATIONS + "/#", LOCATION_ID);
     }
 
     /**
@@ -88,7 +90,7 @@ public class DataProvider extends ContentProvider {
                 //This is because this code means the entire table and we do not need to decode the
                 //specific row like we did in the PET_ID case below where we inserted the desired
                 //row to the selection, and selection arg.
-                cursor = database.query(DataContract.DataEntry.TABLE_NAME, projection, selection, selectionArgs,
+                cursor = database.query(LocationEntry.TABLE_NAME, projection, selection, selectionArgs,
                         null, null, sortOrder);
                 break;
 
@@ -102,14 +104,14 @@ public class DataProvider extends ContentProvider {
                 // For every "?" in the selection, we need to have an element in the selection
                 // arguments that will fill in the "?". Since we have 1 question mark in the
                 // selection, we have 1 String in the selection arguments' String array.
-                selection = DataContract.DataEntry._ID + "=?";
+                selection = LocationEntry._ID + "=?";
                 //ContentUris.parseID method converts the last path segment to a long (i.e. we get
                 //the number after / corresponding to the row of the table
                 selectionArgs = new String[] { String.valueOf(ContentUris.parseId(uri)) };
 
                 // This will perform a query on the pets table where the _id equals 3 to return a
                 // Cursor containing that row of the table.
-                cursor = database.query(DataContract.DataEntry.TABLE_NAME, projection, selection, selectionArgs,
+                cursor = database.query(LocationEntry.TABLE_NAME, projection, selection, selectionArgs,
                         null, null, sortOrder);
                 break;
 
@@ -152,7 +154,7 @@ public class DataProvider extends ContentProvider {
         SQLiteDatabase database = mDbHelper.getWritableDatabase();
 
         //We store the number that was returned from our insert method (i.e. column ID)
-        long newRowId = database.insert(DataContract.DataEntry.TABLE_NAME,null, values);
+        long newRowId = database.insert(LocationEntry.TABLE_NAME,null, values);
 
         if (newRowId == -1){
             //insert return -1 if there was an error and this means the pet was NOT added
@@ -193,11 +195,11 @@ public class DataProvider extends ContentProvider {
 
         switch (match) {
             case LOCATIONS:
-                return database.delete(DataContract.DataEntry.TABLE_NAME, selection, selectionArgs);
+                return database.delete(LocationEntry.TABLE_NAME, selection, selectionArgs);
             case LOCATION_ID:
-                selection = DataContract.DataEntry._ID + "=?";
+                selection = LocationEntry._ID + "=?";
                 selectionArgs = new String[] { String.valueOf(ContentUris.parseId(uri)) };
-                return database.delete(DataContract.DataEntry.TABLE_NAME, selection, selectionArgs);
+                return database.delete(LocationEntry.TABLE_NAME, selection, selectionArgs);
             default:
                 throw new IllegalArgumentException("Deletion is not supported for " + uri);
         }//switch
@@ -211,9 +213,9 @@ public class DataProvider extends ContentProvider {
         final int match = sUriMatcher.match(uri);
         switch (match) {
             case LOCATIONS:
-                return DataContract.DataEntry.CONTENT_LIST_TYPE;
+                return LocationEntry.CONTENT_LIST_TYPE;
             case LOCATION_ID:
-                return DataContract.DataEntry.CONTENT_ITEM_TYPE;
+                return LocationEntry.CONTENT_ITEM_TYPE;
             default:
                 throw new IllegalStateException("Unknown URI " + uri + " with match " + match);
         }

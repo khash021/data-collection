@@ -17,12 +17,17 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.android.datacollection.Database.DataContract;
+
+import com.example.android.datacollection.Database.LocationContract.LocationEntry;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
 /**
  * Created by Khashayar on 2/17/2018.
@@ -33,9 +38,10 @@ public class DataEntry extends AppCompatActivity implements GoogleApiClient.Conn
         GoogleApiClient.OnConnectionFailedListener, LocationListener {
 
     //Variables
+
     //Tag to be used for all our logs
     private final String TAG = "Data Entry";
-
+    //To be used by location services permission request
     private static final int REQUEST_LOCATION = 0;
     //The TextView that displays the current location
     private GoogleApiClient mGoogleApiClient;
@@ -43,8 +49,11 @@ public class DataEntry extends AppCompatActivity implements GoogleApiClient.Conn
     private LocationRequest mLocationRequest;
     private TextView locationOutput;
 
-    //Data object
-    Data data = new Data();
+    //Date and time format and date instance
+    final DateFormat dateFormat = new SimpleDateFormat("MM.dd.yyyy 'at' HH:mm:ss z");
+    final String currentDateTime = dateFormat.format(Calendar.getInstance().getTime());
+
+
     //Location data
     double lat, lon;
 
@@ -118,7 +127,6 @@ public class DataEntry extends AppCompatActivity implements GoogleApiClient.Conn
             @Override
             public void onClick(View view) {
                 if (mLocationCheckBox.isChecked()) {
-                    insertArray();
                     insertData();
                     if (mGarbageCheckBox.isChecked()) {
                         mGarbageCheckBox.setChecked(false);
@@ -179,11 +187,11 @@ public class DataEntry extends AppCompatActivity implements GoogleApiClient.Conn
         //this is what we are going to pass into the Query method. This String is similar
         //to the statement after SELECT, we tell it which columns we want, here we want everything
         String[] projection = {
-                DataContract.DataEntry._ID,
+                LocationEntry._ID,
         };
 
         Cursor cursor = getContentResolver().query(
-                DataContract.DataEntry.CONTENT_URI,     //The content Uri
+                LocationEntry.CONTENT_URI,     //The content Uri
                 projection,               //The columns to return for each row
                 null,            //Selection criteria
                 null,         //Selection criteria
@@ -191,13 +199,10 @@ public class DataEntry extends AppCompatActivity implements GoogleApiClient.Conn
         );
 
         TextView counterTextView = findViewById(R.id.data_counter);
-        TextView arrayCounterTextView = findViewById(R.id.data_array_counter);
 
         try {
             counterTextView.setText("Current number of data-points in database: " +
                     cursor.getCount());
-            arrayCounterTextView.setText("Current number of data-points in ArrayList: "
-                    + MainActivity.dataArray.size());
 
         } finally {
             // Always close the cursor when you're done reading from it. This releases all its
@@ -242,15 +247,15 @@ public class DataEntry extends AppCompatActivity implements GoogleApiClient.Conn
         // Create a new map of values, where column names are the keys
         //and Toto's pet attributes are the values.
         ContentValues values = new ContentValues();
-        values.put(DataContract.DataEntry.COLUMN_LOCATION_LATITUDE, lat);
-        values.put(DataContract.DataEntry.COLUMN_LOCATION_LONGITUDE, lon);
-        values.put(DataContract.DataEntry.COLUMN_LOCATION_GARBAGE, mGarbage);
-        values.put(DataContract.DataEntry.COLUMN_LOCATION_CONTAINER, mContainer);
-        values.put(DataContract.DataEntry.COLUMN_LOCATION_PAPER, mPaper);
-        values.put(DataContract.DataEntry.COLUMN_LOCATION_COMMENT, mComment);
+        values.put(LocationEntry.COLUMN_LOCATION_LATITUDE, lat);
+        values.put(LocationEntry.COLUMN_LOCATION_LONGITUDE, lon);
+        values.put(LocationEntry.COLUMN_LOCATION_GARBAGE, mGarbage);
+        values.put(LocationEntry.COLUMN_LOCATION_CONTAINER, mContainer);
+        values.put(LocationEntry.COLUMN_LOCATION_PAPER, mPaper);
+        values.put(LocationEntry.COLUMN_LOCATION_COMMENT, mComment);
 
         // Insert a new pet into the provider, returning the content URI for the new pet.
-        Uri newUri = getContentResolver().insert(DataContract.DataEntry.CONTENT_URI, values);
+        Uri newUri = getContentResolver().insert(LocationEntry.CONTENT_URI, values);
 
         // Show a toast message depending on whether or not the insertion was successful
         if (newUri == null) {
@@ -269,25 +274,25 @@ public class DataEntry extends AppCompatActivity implements GoogleApiClient.Conn
     //This deletes the last input
     public void undo(){
         String[] projection = {
-                DataContract.DataEntry._ID
+                LocationEntry._ID
         };
 
         Cursor cursor = getContentResolver().query(
-                DataContract.DataEntry.CONTENT_URI,     //The content Uri
+                LocationEntry.CONTENT_URI,     //The content Uri
                 projection,               //The columns to return for each row
                 null,            //Selection criteria
                 null,         //Selection criteria
                 null            //The sort order for returned rows
         );
 
-        int columnID = cursor.getColumnIndex(DataContract.DataEntry._ID);
+        int columnID = cursor.getColumnIndex(LocationEntry._ID);
         cursor.moveToLast();
 
         int lastRow = cursor.getInt(columnID);
         long id = lastRow;
 
         //Creating a correct URI pointing to the last row
-        Uri uri = ContentUris.withAppendedId(DataContract.DataEntry.CONTENT_URI, id);
+        Uri uri = ContentUris.withAppendedId(LocationEntry.CONTENT_URI, id);
 
 
         int result = getContentResolver().delete(uri, null , null);
@@ -303,23 +308,6 @@ public class DataEntry extends AppCompatActivity implements GoogleApiClient.Conn
 
     }//undo
 
-    private void insertArray(){
-        //Setting up the Checkboxes variables
-        mGarbageCheckBox = findViewById(R.id.checkbox_garbage);
-        mContainerCheckBox = findViewById(R.id.checkbox_container);
-        mPaperCheckBox = findViewById(R.id.checkbox_paper);
-        mCommentText = findViewById(R.id.comment_text);
-
-        data = new Data();
-        data.garbage = mGarbageCheckBox.isChecked();
-        data.container = mContainerCheckBox.isChecked();
-        data.container = mPaperCheckBox.isChecked();
-        data.lat = lat;
-        data.lon = lon;
-        data.message = mCommentText.getText().toString();
-        MainActivity.dataArray.add(data);
-
-    }//insertArray
 
     @Override
     protected void onStart() {

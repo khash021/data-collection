@@ -2,7 +2,6 @@ package com.example.android.datacollection;
 
 import android.content.Intent;
 import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -11,24 +10,17 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.android.datacollection.Database.DataContract;
+import com.example.android.datacollection.Database.LocationContract.LocationEntry;
 import com.example.android.datacollection.Database.DataDbHelper;
-
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
 
 public class MainActivity extends AppCompatActivity  {
 
     //Variables
+    //Tag for logging
     private final String TAG = "Main Activity";
+    //Declaring the Database helper object
     private DataDbHelper mDbHelper;
-    //ArrayList for holding the data
-    static ArrayList<Data> dataArray = new ArrayList<>();
-    //Date and time format and date instance
-    final DateFormat dateFormat = new SimpleDateFormat("MM.dd.yyyy 'at' HH:mm:ss z");
-    final String currentDateTime = dateFormat.format(Calendar.getInstance().getTime());
+
 
 
     @Override
@@ -37,45 +29,30 @@ public class MainActivity extends AppCompatActivity  {
         Log.d(TAG, "onCreate() called");
         setContentView(R.layout.activity_main);
 
+        //TODO: Move the permission here from the LocationEntry
 
-        //Buttons
+
+        //Enter data button
         Button enterDataButton = findViewById(R.id.enter_data);
-        Button uploadArrayList  = findViewById(R.id.send_email);
-        Button deleteAllButton = findViewById(R.id.delete_all);
-
-        //onClick listener for enter data button
         enterDataButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //This creates an Intent to open the DataEntry Class and then use that intent
-                //to start DataEntry activity
+                //This creates an Intent to open the LocationEntry Class and then use that intent
+                //to start LocationEntry activity
                 Intent intent = new Intent(MainActivity.this, DataEntry.class);
                 startActivity(intent);
             }
         }); //onClickListener-enter data
 
-        //onClickListener for uploadArrayList
-        uploadArrayList.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //This section emails the ArrayList using the message created by getDataList method of Data class
-                Intent intent = new Intent(Intent.ACTION_SENDTO);
-                intent.setData(Uri.parse("mailto: khash.021@gmail.com"));
-                intent.putExtra(Intent.EXTRA_SUBJECT, "Data collection: " + currentDateTime);
-                intent.putExtra(Intent.EXTRA_TEXT, Data.getDataList(dataArray));
-                if (intent.resolveActivity(getPackageManager()) != null) {
-                    startActivity(intent);
-                }//if
 
-            }//onClick
-        });//onClickListener - uploadArrayList
-
+        //Delete button
+        Button deleteAllButton = findViewById(R.id.delete_all);
         deleteAllButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
                 String whereClause = "1";
-                int result = getContentResolver().delete(DataContract.DataEntry.CONTENT_URI,
+                int result = getContentResolver().delete(LocationEntry.CONTENT_URI,
                         whereClause, null);
 
                 //We should be getting an integer with the number of deleted rows since we have
@@ -127,11 +104,11 @@ public class MainActivity extends AppCompatActivity  {
         //this is what we are going to pass into the Query method. This String is similar
         //to the statement after SELECT, we tell it which columns we want, here we want everything
         String[] projection = {
-                DataContract.DataEntry._ID,
+                LocationEntry._ID,
         };
 
         Cursor cursor = getContentResolver().query(
-                DataContract.DataEntry.CONTENT_URI,     //The content Uri
+                LocationEntry.CONTENT_URI,     //The content Uri
                 projection,               //The columns to return for each row
                 null,            //Selection criteria
                 null,         //Selection criteria
@@ -144,8 +121,6 @@ public class MainActivity extends AppCompatActivity  {
         try {
             counterTextView.setText("Current number of data-points in database: " +
                     cursor.getCount());
-            arrayCounterTextView.setText("Current number of data-points in ArrayList: "
-                    + MainActivity.dataArray.size());
 
         } finally {
             // Always close the cursor when you're done reading from it. This releases all its
@@ -154,11 +129,5 @@ public class MainActivity extends AppCompatActivity  {
         } //finally
 
     }//displayDatabaseInfo
-
-
-
-
-
-
 
 } //Main Activity

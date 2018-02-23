@@ -5,7 +5,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
-import com.example.android.datacollection.Database.DataContract.DataEntry;
+import com.example.android.datacollection.Database.LocationContract.LocationEntry;
 
 /**
  * Created by Khashayar on 2/17/2018.
@@ -44,14 +44,14 @@ public class DataDbHelper extends SQLiteOpenHelper {
         We are doing the same thing except we make it a String constant so we can just pass in the
         String to the method (execSQL) instead of writing it everytime
          */
-        String SQL_CREATE_DATA_TABLE = "CREATE TABLE " + DataEntry.TABLE_NAME + " (" +
-                DataEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                DataEntry.COLUMN_LOCATION_LATITUDE + " REAL NOT NULL, " +
-                DataEntry.COLUMN_LOCATION_LONGITUDE + " REAL NOT NULL, " +
-                DataEntry.COLUMN_LOCATION_GARBAGE + " INTEGER NOT NULL DEFAULT 0, " +
-                DataEntry.COLUMN_LOCATION_CONTAINER + " INTEGER NOT NULL DEFAULT 0, " +
-                DataEntry.COLUMN_LOCATION_PAPER + " INTEGER NOT NULL DEFAULT 0, " +
-                DataEntry.COLUMN_LOCATION_COMMENT + " TEXT);";
+        String SQL_CREATE_DATA_TABLE = "CREATE TABLE " + LocationEntry.TABLE_NAME + " (" +
+                LocationEntry._ID + " INTEGER PRIMARY KEY, " +
+                LocationEntry.COLUMN_LOCATION_LATITUDE + " REAL NOT NULL, " +
+                LocationEntry.COLUMN_LOCATION_LONGITUDE + " REAL NOT NULL, " +
+                LocationEntry.COLUMN_LOCATION_GARBAGE + " INTEGER NOT NULL DEFAULT 0, " +
+                LocationEntry.COLUMN_LOCATION_CONTAINER + " INTEGER NOT NULL DEFAULT 0, " +
+                LocationEntry.COLUMN_LOCATION_PAPER + " INTEGER NOT NULL DEFAULT 0, " +
+                LocationEntry.COLUMN_LOCATION_COMMENT + " TEXT);";
 
         // Execute the SQL statement
         //Note; execSQL is not a static method and we run that on the SQLiteDatabase object (db)

@@ -50,7 +50,6 @@ public class DataEntry extends AppCompatActivity implements GoogleApiClient.Conn
     CheckBox mGarbageCheckBox, mContainerCheckBox, mPaperCheckBox, mLocationCheckBox;
     EditText mCommentText;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -236,7 +235,6 @@ public class DataEntry extends AppCompatActivity implements GoogleApiClient.Conn
                     Toast.LENGTH_SHORT).show();
         }
         displayDatabaseInfo();
-
     }//insertLocation
 
     //This deletes the last input
@@ -255,8 +253,10 @@ public class DataEntry extends AppCompatActivity implements GoogleApiClient.Conn
                 null            //The sort order for returned rows
         );
 
-        //Here we need to check and see if there is at least one item in the database; otherwise
-        //if we try to delete the last row which doesnt exist, the app crashes.
+        /**
+         * Here we need to check and see if there is at least one item in the database;
+         * otherwise if we try to delete the last row which doesnt exist, the app crashes.
+         */
         if (cursor.getCount() <= 0) {
             Toast.makeText(this, "Database is empty.", Toast.LENGTH_SHORT).show();
             return;
@@ -285,7 +285,7 @@ public class DataEntry extends AppCompatActivity implements GoogleApiClient.Conn
                     "Last entry has been deleted ", Toast.LENGTH_SHORT).show();
             displayDatabaseInfo();
         }
-
+        cursor.close();
     }//undo
 
 

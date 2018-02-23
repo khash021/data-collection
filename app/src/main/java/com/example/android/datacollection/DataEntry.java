@@ -288,7 +288,6 @@ public class DataEntry extends AppCompatActivity implements GoogleApiClient.Conn
         cursor.close();
     }//undo
 
-
     @Override
     protected void onStart() {
         Log.d(TAG, "Started");
@@ -330,19 +329,19 @@ public class DataEntry extends AppCompatActivity implements GoogleApiClient.Conn
         LocationRequest mLocationRequest;
         //Create a LocationRequest using create() method
         mLocationRequest = LocationRequest.create();
-        //set the interval on the locationRequest object (times are in milli seconds). This is how often it updates
+        //set the interval on the locationRequest object (times are in milli seconds).
+        // This is how often it updates
         mLocationRequest.setInterval(1000);
         //set the priority
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
 
         Log.d(TAG, "mLocationRequest: " + mLocationRequest);
 
-//        LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
-
-        //We could just simply put the line LocationServices.Fused.... here; but this way we first
-        //make sure that we have permission
-        // Here we check to see if we have permission and then we can start requesting our location updates
-        // Add support for runtime permission check
+        /**
+         *  We could just simply put the line LocationServices.Fused.... here; but this way, we
+         *  first make sure that we have permission, and then we can start requesting our location
+         *  updates.
+         */
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
             // Check Permissions Now
@@ -355,8 +354,10 @@ public class DataEntry extends AppCompatActivity implements GoogleApiClient.Conn
         }
     } //onConnected
 
-    //This is where we define what to be done when the location changes (based on the interval we set
-    //in onConnected. Here for example we update the mLat/log in the TextView
+    /**
+     *     This is where we define what to be done when the location changes (based on the
+     *     interval we set in onConnected. Here for example we update the mLat/mLon in the TextView
+     */
     @Override
     public void onLocationChanged(Location location) {
         CheckBox locationCheckBox = findViewById(R.id.checkbox_location);

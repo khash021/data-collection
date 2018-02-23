@@ -24,7 +24,7 @@ public class LocationProvider extends ContentProvider {
     public static final String LOG_TAG = LocationProvider.class.getSimpleName();
 
     //Database helper object
-    DataDbHelper mDbHelper;
+    LocationDbHelper mDbHelper;
 
     /** URI matcher code for the content URI for the locations table */
     private static final int LOCATIONS = 100;
@@ -59,7 +59,7 @@ public class LocationProvider extends ContentProvider {
 
         //We used getContext() here, because we cannot use 'this' can only be used when the Class
         //extends from Context (such as Application, Activity, Service and IntentServices
-        mDbHelper = new DataDbHelper(getContext());
+        mDbHelper = new LocationDbHelper(getContext());
 
         return true;
     }

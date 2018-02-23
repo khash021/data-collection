@@ -12,9 +12,9 @@ import com.example.android.datacollection.Database.LocationContract.LocationEntr
  * This is the class which creates the database
  */
 
-public class DataDbHelper extends SQLiteOpenHelper {
+public class LocationDbHelper extends SQLiteOpenHelper {
 
-    public static final String LOG_TAG = DataDbHelper.class.getSimpleName();
+    public static final String LOG_TAG = LocationDbHelper.class.getSimpleName();
 
     /** Name of the database file */
     private static final String DATABASE_NAME = "location.db";
@@ -24,13 +24,13 @@ public class DataDbHelper extends SQLiteOpenHelper {
     private static final int DATABASE_VERSION = 1;
 
     /**
-     * Constructs a new instance of {@link DataDbHelper}.
+     * Constructs a new instance of {@link LocationDbHelper}.
      *
      * @param context of the app
      */
-    public DataDbHelper(Context context) {
+    public LocationDbHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
-    }//DataDbHelper
+    }//LocationDbHelper
 
 
     @Override

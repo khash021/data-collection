@@ -25,7 +25,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".DataEntry"
+            android:name=".LocationEntry"
             android:label="Data Entry"
             android:parentActivityName=".MainActivity" >
         //Providing up navigation

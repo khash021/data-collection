@@ -13,8 +13,6 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.android.datacollection.Database.LocationContract.LocationEntry;
-
 public class MainActivity extends AppCompatActivity  {
 
     //Variables
@@ -50,14 +48,14 @@ public class MainActivity extends AppCompatActivity  {
             // result of the request.
         } //permission
 
-        //Enter data button (this takes us to the DataEntry activity
+        //Enter data button (this takes us to the LocationEntry activity
         Button enterDataButton = findViewById(R.id.enter_data);
         enterDataButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 //This creates an Intent to open the LocationEntry Class and then use that intent
                 //to start LocationEntry activity
-                Intent intent = new Intent(MainActivity.this, DataEntry.class);
+                Intent intent = new Intent(MainActivity.this, LocationEntry.class);
                 startActivity(intent);
             }
         }); //onClickListener-enter data
@@ -70,7 +68,7 @@ public class MainActivity extends AppCompatActivity  {
                 //By passing in 1 as the whereClause, it will delete all rows and return the number
                 //of rows deleted.
                 String whereClause = "1";
-                int result = getContentResolver().delete(LocationEntry.CONTENT_URI,
+                int result = getContentResolver().delete(com.example.android.datacollection.Database.LocationContract.LocationEntry.CONTENT_URI,
                         whereClause, null);
 
                 //We should be getting an integer with the number of deleted rows since we have
@@ -111,11 +109,11 @@ public class MainActivity extends AppCompatActivity  {
         //this is what we are going to pass into the Query method. This String is similar
         //to the statement after SELECT, we tell it which columns we want, here we want everything
         String[] projection = {
-                LocationEntry._ID,
+                com.example.android.datacollection.Database.LocationContract.LocationEntry._ID,
         };
 
         Cursor cursor = getContentResolver().query(
-                LocationEntry.CONTENT_URI,     //The content Uri
+                com.example.android.datacollection.Database.LocationContract.LocationEntry.CONTENT_URI,     //The content Uri
                 projection,               //The columns to return for each row
                 null,            //Selection criteria
                 null,         //Selection criteria

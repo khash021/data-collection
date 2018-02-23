@@ -18,7 +18,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
-import com.example.android.datacollection.Database.LocationContract.LocationEntry;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
@@ -34,7 +33,7 @@ import java.util.Calendar;
  * This class is for entering data
  */
 
-public class DataEntry extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks,
+public class LocationEntry extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener, LocationListener {
 
     //Tag to be used for all our logs
@@ -126,7 +125,7 @@ public class DataEntry extends AppCompatActivity implements GoogleApiClient.Conn
                         mCommentText.setText("");
                     }
                 } else {
-                    Toast.makeText(DataEntry.this, "Location is not acquired yet, "
+                    Toast.makeText(LocationEntry.this, "Location is not acquired yet, "
                                     + "please wait for the location check box and try again",
                             Toast.LENGTH_SHORT).show();
                 }
@@ -153,11 +152,11 @@ public class DataEntry extends AppCompatActivity implements GoogleApiClient.Conn
         //this is what we are going to pass into the Query method. This String is similar
         //to the statement after SELECT, we tell it which columns we want, here we want everything
         String[] projection = {
-                LocationEntry._ID,
+                com.example.android.datacollection.Database.LocationContract.LocationEntry._ID,
         };
 
         Cursor cursor = getContentResolver().query(
-                LocationEntry.CONTENT_URI,     //The content Uri
+                com.example.android.datacollection.Database.LocationContract.LocationEntry.CONTENT_URI,     //The content Uri
                 projection,               //The columns to return for each row
                 null,            //Selection criteria
                 null,         //Selection criteria
@@ -214,15 +213,15 @@ public class DataEntry extends AppCompatActivity implements GoogleApiClient.Conn
 
         // Create a new map of values,
         ContentValues values = new ContentValues();
-        values.put(LocationEntry.COLUMN_LOCATION_LATITUDE, mLat);
-        values.put(LocationEntry.COLUMN_LOCATION_LONGITUDE, mLon);
-        values.put(LocationEntry.COLUMN_LOCATION_GARBAGE, mGarbage);
-        values.put(LocationEntry.COLUMN_LOCATION_CONTAINER, mContainer);
-        values.put(LocationEntry.COLUMN_LOCATION_PAPER, mPaper);
-        values.put(LocationEntry.COLUMN_LOCATION_COMMENT, mComment);
+        values.put(com.example.android.datacollection.Database.LocationContract.LocationEntry.COLUMN_LOCATION_LATITUDE, mLat);
+        values.put(com.example.android.datacollection.Database.LocationContract.LocationEntry.COLUMN_LOCATION_LONGITUDE, mLon);
+        values.put(com.example.android.datacollection.Database.LocationContract.LocationEntry.COLUMN_LOCATION_GARBAGE, mGarbage);
+        values.put(com.example.android.datacollection.Database.LocationContract.LocationEntry.COLUMN_LOCATION_CONTAINER, mContainer);
+        values.put(com.example.android.datacollection.Database.LocationContract.LocationEntry.COLUMN_LOCATION_PAPER, mPaper);
+        values.put(com.example.android.datacollection.Database.LocationContract.LocationEntry.COLUMN_LOCATION_COMMENT, mComment);
 
         // Insert a new location into the provider, returning the content URI for the new location.
-        Uri newUri = getContentResolver().insert(LocationEntry.CONTENT_URI, values);
+        Uri newUri = getContentResolver().insert(com.example.android.datacollection.Database.LocationContract.LocationEntry.CONTENT_URI, values);
 
         // Show a toast message depending on whether or not the insertion was successful
         if (newUri == null) {
@@ -240,13 +239,13 @@ public class DataEntry extends AppCompatActivity implements GoogleApiClient.Conn
     //This deletes the last input
     public void undo(){
         String[] projection = {
-                LocationEntry._ID
+                com.example.android.datacollection.Database.LocationContract.LocationEntry._ID
         };
 
         //Query the database with ID as projection. We will use this to find out the ID
         //of the last item in the database to be used for deleting
         Cursor cursor = getContentResolver().query(
-                LocationEntry.CONTENT_URI,     //The content Uri
+                com.example.android.datacollection.Database.LocationContract.LocationEntry.CONTENT_URI,     //The content Uri
                 projection,               //The columns to return for each row
                 null,            //Selection criteria
                 null,         //Selection criteria
@@ -263,7 +262,7 @@ public class DataEntry extends AppCompatActivity implements GoogleApiClient.Conn
         }
 
         //get the index of the ID column
-        int columnID = cursor.getColumnIndex(LocationEntry._ID);
+        int columnID = cursor.getColumnIndex(com.example.android.datacollection.Database.LocationContract.LocationEntry._ID);
         //Move the cursor to the last row
         cursor.moveToLast();
         //get the ID of the last item
@@ -272,7 +271,7 @@ public class DataEntry extends AppCompatActivity implements GoogleApiClient.Conn
         long id = lastRow;
 
         //Creating a correct URI pointing to the last row
-        Uri uri = ContentUris.withAppendedId(LocationEntry.CONTENT_URI, id);
+        Uri uri = ContentUris.withAppendedId(com.example.android.datacollection.Database.LocationContract.LocationEntry.CONTENT_URI, id);
 
         //delete will return an integer with the number of rows deleted
         int result = getContentResolver().delete(uri, null , null);
@@ -384,4 +383,4 @@ public class DataEntry extends AppCompatActivity implements GoogleApiClient.Conn
         Log.i(TAG, "GoogleApiClient connection failed");
     } //onConnectionFailed
 
-} //DataEntry Class
+} //LocationEntry Class

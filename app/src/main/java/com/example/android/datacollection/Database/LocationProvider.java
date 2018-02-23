@@ -9,7 +9,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.util.Log;
 
-import com.example.android.datacollection.Database.DataContract.LocationEntry;
+import com.example.android.datacollection.Database.LocationContract.LocationEntry;
 
 /**
  * Created by Khashayar on 2/20/2018.
@@ -45,8 +45,8 @@ public class LocationProvider extends ContentProvider {
         // should recognize. All paths added to the UriMatcher have a corresponding code to return
         // when a match is found.
 
-        sUriMatcher.addURI(DataContract.CONTENT_AUTHORITY, DataContract.PATH_LOCATIONS, LOCATIONS);
-        sUriMatcher.addURI(DataContract.CONTENT_AUTHORITY, DataContract.PATH_LOCATIONS + "/#", LOCATION_ID);
+        sUriMatcher.addURI(LocationContract.CONTENT_AUTHORITY, LocationContract.PATH_LOCATIONS, LOCATIONS);
+        sUriMatcher.addURI(LocationContract.CONTENT_AUTHORITY, LocationContract.PATH_LOCATIONS + "/#", LOCATION_ID);
     }
 
     /**
@@ -86,9 +86,9 @@ public class LocationProvider extends ContentProvider {
         //This is where we decide which path to go down based on the integer code of the Uri
         switch (match) {
             case LOCATIONS:
-                //For the PETS code, query the pets table directly with the given input arguments.
+                //For the LOCATIONS code, query the locations table directly with the given input arguments.
                 //This is because this code means the entire table and we do not need to decode the
-                //specific row like we did in the PET_ID case below where we inserted the desired
+                //specific row like we did in the LOCATION_ID case below where we inserted the desired
                 //row to the selection, and selection arg.
                 cursor = database.query(LocationEntry.TABLE_NAME, projection, selection, selectionArgs,
                         null, null, sortOrder);
@@ -96,8 +96,8 @@ public class LocationProvider extends ContentProvider {
 
             case LOCATION_ID:
 
-                // For the PET_ID code, extract out the ID from the URI.
-                // For an example URI such as "content://com.example.android.pets/pets/3",
+                // For the LOCATION_ID code, extract out the ID from the URI.
+                // For an example URI such as "content://com.example.android.locations/locations/3",
                 // the selection will be "_id=?" and the selection argument will be a
                 // String array containing the actual ID of 3 in this case.
                 //
@@ -109,7 +109,7 @@ public class LocationProvider extends ContentProvider {
                 //the number after / corresponding to the row of the table
                 selectionArgs = new String[] { String.valueOf(ContentUris.parseId(uri)) };
 
-                // This will perform a query on the pets table where the _id equals 3 to return a
+                // This will perform a query on the locations table where the _id equals 3 to return a
                 // Cursor containing that row of the table.
                 cursor = database.query(LocationEntry.TABLE_NAME, projection, selection, selectionArgs,
                         null, null, sortOrder);
@@ -157,7 +157,7 @@ public class LocationProvider extends ContentProvider {
         long newRowId = database.insert(LocationEntry.TABLE_NAME,null, values);
 
         if (newRowId == -1){
-            //insert return -1 if there was an error and this means the pet was NOT added
+            //insert return -1 if there was an error and this means the location was NOT added
             Log.e(LOG_TAG, "Failed to insert row for " + uri);
             return null;
         } //if

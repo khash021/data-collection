@@ -5,7 +5,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
-import com.example.android.datacollection.Database.DataContract.LocationEntry;
+import com.example.android.datacollection.Database.LocationContract.LocationEntry;
 
 /**
  * Created by Khashayar on 2/17/2018.
@@ -37,7 +37,7 @@ public class DataDbHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
 
         Log.d(LOG_TAG, "onCreate() called");
-        // Create a String that contains the SQL statement to create the pets table
+        // Create a String that contains the SQL statement to create the locations table
         /*
         Remember the SQLite command:
         CREATE TABLE <table name> (<column_name> <column_datatype>, .....)

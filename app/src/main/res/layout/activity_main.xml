@@ -35,14 +35,6 @@
         android:layout_gravity="center_horizontal" />
 
     <Button
-        android:id="@+id/send_email"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_margin="12dp"
-        android:text="Upload ArrayList"/>
-
-    <Button
         android:id="@+id/delete_all"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

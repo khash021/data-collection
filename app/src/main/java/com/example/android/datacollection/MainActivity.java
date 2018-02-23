@@ -13,7 +13,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.android.datacollection.Database.DataContract.LocationEntry;
+import com.example.android.datacollection.Database.LocationContract.LocationEntry;
 
 public class MainActivity extends AppCompatActivity  {
 
@@ -33,8 +33,8 @@ public class MainActivity extends AppCompatActivity  {
          *  This is what gets the permission for the location on start up.
          *  Notice: that this activity is not using the location, but we check this here
          *          so we won't need to deal with the permission in the Location activity
+         *
          */
-        // Here, thisActivity is the current activity
         if (ContextCompat.checkSelfPermission(this,
                 android.Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {

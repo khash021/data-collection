@@ -47,8 +47,9 @@ public class LocationEntry extends AppCompatActivity implements GoogleApiClient.
     private double mLat = 0.0;
     private double mLon = 0.0;
     //Checkboxes, and EditTexts
-    CheckBox mGarbageCheckBox, mContainerCheckBox, mPaperCheckBox, mLocationCheckBox;
-    EditText mCommentText;
+    CheckBox mGarbageCheckBox, mContainerCheckBox, mPaperCheckBox, mLocationCheckBox,
+            mEstablishmentCheckBox;
+    EditText mCommentText, mEstablishmentText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,7 +73,10 @@ public class LocationEntry extends AppCompatActivity implements GoogleApiClient.
         mContainerCheckBox = findViewById(R.id.checkbox_container);
         mPaperCheckBox = findViewById(R.id.checkbox_paper);
         mLocationCheckBox = findViewById(R.id.checkbox_location);
+        mEstablishmentCheckBox = findViewById(R.id.checkbox_inside);
         mCommentText = findViewById(R.id.comment_text);
+        mEstablishmentText = findViewById(R.id.inside_text);
+
 
         //Buttons
         Button resetButton = findViewById(R.id.reset_button);
@@ -99,8 +103,14 @@ public class LocationEntry extends AppCompatActivity implements GoogleApiClient.
                 if (mLocationCheckBox.isChecked()) {
                     mLocationCheckBox.setChecked(false);
                 }
-                if (mCommentText.getText().toString().length() > 0) {
+                if (mEstablishmentCheckBox.isChecked()) {
+                    mEstablishmentCheckBox.setChecked(false);
+                }
+                if (mCommentText.getText().toString().trim().length() > 0) {
                     mCommentText.setText("");
+                }
+                if (mEstablishmentText.getText().toString().trim().length() > 0) {
+                    mEstablishmentText.setText("");
                 }
             }
         });//Reset - onClickListener
@@ -111,6 +121,7 @@ public class LocationEntry extends AppCompatActivity implements GoogleApiClient.
             public void onClick(View view) {
                 if (mLocationCheckBox.isChecked()) {
                     insertLocation();
+                    //Reset all the checkboxes and Edit Texts
                     if (mGarbageCheckBox.isChecked()) {
                         mGarbageCheckBox.setChecked(false);
                     }
@@ -125,6 +136,12 @@ public class LocationEntry extends AppCompatActivity implements GoogleApiClient.
                     }
                     if (mCommentText.getText().toString().length() > 0) {
                         mCommentText.setText("");
+                    }
+                    if (mCommentText.getText().toString().trim().length() > 0) {
+                        mCommentText.setText("");
+                    }
+                    if (mEstablishmentText.getText().toString().trim().length() > 0) {
+                        mEstablishmentText.setText("");
                     }
                 } else {
                     Toast.makeText(LocationEntry.this, "Location is not acquired yet, "

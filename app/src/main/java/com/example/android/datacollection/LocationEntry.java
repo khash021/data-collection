@@ -2,6 +2,7 @@ package com.example.android.datacollection;
 
 import android.content.ContentUris;
 import android.content.ContentValues;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.location.Location;
@@ -16,7 +17,6 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
-
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -42,8 +42,10 @@ public class LocationEntry extends AppCompatActivity implements GoogleApiClient.
     private GoogleApiClient mGoogleApiClient;
     //Date and time format and date instance
     private final DateFormat mDateFormat = new SimpleDateFormat("MM.dd.yyyy 'at' HH:mm:ss z");
-    //Location data
-    private double mLat, mLon;
+    //Location data. They are initialized to 0.0 to check if there is no location acquired in the
+    //helper methods throughout this Class
+    private double mLat = 0.0;
+    private double mLon = 0.0;
     //Checkboxes, and EditTexts
     CheckBox mGarbageCheckBox, mContainerCheckBox, mPaperCheckBox, mLocationCheckBox;
     EditText mCommentText;
@@ -76,6 +78,7 @@ public class LocationEntry extends AppCompatActivity implements GoogleApiClient.
         Button resetButton = findViewById(R.id.reset_button);
         Button submitButton = findViewById(R.id.submit_button);
         Button undoButton = findViewById(R.id.undo_button);
+        Button mapButton = findViewById(R.id.map_button);
 
 
         //onClick listener for reset button
@@ -139,6 +142,14 @@ public class LocationEntry extends AppCompatActivity implements GoogleApiClient.
 
             }
         });//onClickListener - undo
+
+        //onClickListener for maps button
+        mapButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                goToMaps();
+            }
+        });//onClickListener - map
 
     } //OnCreate
 
@@ -288,6 +299,25 @@ public class LocationEntry extends AppCompatActivity implements GoogleApiClient.
         }
         cursor.close();
     }//undo
+
+    //This method will send an intent and the phone will direct this Intent to the apps that can
+    // handle maps. (The commented line will send the Intent explicitly to Google Maps.)
+    private void goToMaps(){
+        //We need to make sure that there is live location, otherwise maps will point to 0,0 in the
+        //middle of nowhere. In this case we show a Toast message and exit the method.
+        if (mLat == 0.0 && mLon == 0.0) {
+            Toast.makeText(this, "Location is not aquired.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        //Create the Uri first
+        //By adding "?q= mLat, mLon" we put a pin in the location on the map
+        Uri mapIntentUri = Uri.parse("geo:" + mLat + ", " + mLon + "?q=" + mLat + ", " + mLon );
+        Intent intent =new Intent(Intent.ACTION_VIEW, mapIntentUri);
+        // Make the Intent explicit by setting the Google Maps package, otherwise it will use the
+        //any app that can handle maps.
+//        intent.setPackage("com.google.android.apps.maps");
+        startActivity(intent);
+    }//showOnGoogleMaps
 
     @Override
     protected void onStart() {

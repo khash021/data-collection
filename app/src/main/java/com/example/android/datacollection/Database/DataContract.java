@@ -9,10 +9,10 @@ import android.provider.BaseColumns;
  *  * This is the class that contains the schema of the table and all the constants for out DB
  */
 
-public class LocationContract {
+public class DataContract {
 
     //Default empty constructor
-    private LocationContract(){}
+    private DataContract(){}
 
     /**
      * The "Content authority" is a name for the entire content provider, similar to the

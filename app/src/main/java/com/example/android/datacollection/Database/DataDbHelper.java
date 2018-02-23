@@ -5,7 +5,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
-import com.example.android.datacollection.Database.LocationContract.LocationEntry;
+import com.example.android.datacollection.Database.DataContract.LocationEntry;
 
 /**
  * Created by Khashayar on 2/17/2018.

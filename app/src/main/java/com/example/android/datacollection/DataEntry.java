@@ -18,7 +18,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
-import com.example.android.datacollection.Database.LocationContract.LocationEntry;
+import com.example.android.datacollection.Database.DataContract.LocationEntry;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;

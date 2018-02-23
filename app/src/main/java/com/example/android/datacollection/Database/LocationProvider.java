@@ -9,7 +9,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.util.Log;
 
-import com.example.android.datacollection.Database.LocationContract.LocationEntry;
+import com.example.android.datacollection.Database.DataContract.LocationEntry;
 
 /**
  * Created by Khashayar on 2/20/2018.
@@ -18,10 +18,10 @@ import com.example.android.datacollection.Database.LocationContract.LocationEntr
 /**
  * {@link ContentProvider} for Data Collection app.
  */
-public class DataProvider extends ContentProvider {
+public class LocationProvider extends ContentProvider {
 
     /** Tag for the log messages */
-    public static final String LOG_TAG = DataProvider.class.getSimpleName();
+    public static final String LOG_TAG = LocationProvider.class.getSimpleName();
 
     //Database helper object
     DataDbHelper mDbHelper;
@@ -45,8 +45,8 @@ public class DataProvider extends ContentProvider {
         // should recognize. All paths added to the UriMatcher have a corresponding code to return
         // when a match is found.
 
-        sUriMatcher.addURI(LocationContract.CONTENT_AUTHORITY, LocationContract.PATH_LOCATIONS, LOCATIONS);
-        sUriMatcher.addURI(LocationContract.CONTENT_AUTHORITY, LocationContract.PATH_LOCATIONS + "/#", LOCATION_ID);
+        sUriMatcher.addURI(DataContract.CONTENT_AUTHORITY, DataContract.PATH_LOCATIONS, LOCATIONS);
+        sUriMatcher.addURI(DataContract.CONTENT_AUTHORITY, DataContract.PATH_LOCATIONS + "/#", LOCATION_ID);
     }
 
     /**

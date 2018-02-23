@@ -34,7 +34,7 @@
             android:value=".MainActivity" />
         </activity>
         <provider
-            android:name=".Database.DataProvider"
+            android:name=".Database.LocationProvider"
             android:authorities="com.example.android.datacollection"
             android:exported="false" />
     </application>

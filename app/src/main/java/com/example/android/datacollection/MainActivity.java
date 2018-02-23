@@ -13,7 +13,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.android.datacollection.Database.LocationContract.LocationEntry;
+import com.example.android.datacollection.Database.DataContract.LocationEntry;
 
 public class MainActivity extends AppCompatActivity  {
 

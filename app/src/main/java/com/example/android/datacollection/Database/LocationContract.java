@@ -120,6 +120,22 @@ public class LocationContract {
         public final static String COLUMN_LOCATION_COMMENT = "comments";
 
         /**
+         * Establishment checkbox
+         * The only possible values are: 0, and 1; false, and true respectively
+         *
+         * Type: INTEGER
+         */
+        public final static String COLUMN_LOCATION_ESTABLISHMENT = "establishment";
+
+        /**
+         * Establishment comment
+         *
+         *
+         * Type: TEXT
+         */
+        public final static String COLUMN_LOCATION_ESTABLISHMENT_COMMENT = "establishment_comment";
+
+        /**
          * Date
          *
          * the format = MM.dd.yyyy at hh:mm z (e.g. 02.28.2018 at 02:50 PST)
@@ -127,6 +143,8 @@ public class LocationContract {
          * Type: TEXT
          */
         public final static String COLUMN_LOCATION_DATE = "date_time";
+
+
 
 
     }//LocationEntry

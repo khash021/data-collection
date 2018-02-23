@@ -119,7 +119,19 @@ public class LocationEntry extends AppCompatActivity implements GoogleApiClient.
         submitButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                /**
+                 * First we will check to see if the location is acquired, if not, show a Toast
+                 * telling the user to wait for the location.
+                 * We also need to check to see if the establishment checkbox is true, if so
+                 * we require details. if the establishment text is empty, we show a toast message
+                 * telling the user they need to enter comments regarding the establishment
+                 */
                 if (mLocationCheckBox.isChecked()) {
+                    if ((mEstablishmentCheckBox.isChecked() &&
+                            mEstablishmentText.getText().toString().trim().length() > 0) ||
+                            (!mEstablishmentCheckBox.isChecked() &&
+                                    mEstablishmentText.getText().toString().trim().length() < 1)) {
+
                     insertLocation();
                     //Reset all the checkboxes and Edit Texts
                     if (mGarbageCheckBox.isChecked()) {
@@ -144,8 +156,13 @@ public class LocationEntry extends AppCompatActivity implements GoogleApiClient.
                         mEstablishmentText.setText("");
                     }
                 } else {
+                        Toast.makeText(LocationEntry.this, "If the establishment" +
+                                " checkbox is ticked, there needs to be a comment; and vice versa",
+                                Toast.LENGTH_SHORT).show();
+                    }
+                } else {
                     Toast.makeText(LocationEntry.this, "Location is not acquired yet, "
-                                    + "please wait for the location check box and try again",
+                            + "please wait for the location check box and try again",
                             Toast.LENGTH_SHORT).show();
                 }
             }
@@ -215,10 +232,12 @@ public class LocationEntry extends AppCompatActivity implements GoogleApiClient.
         mContainerCheckBox = findViewById(R.id.checkbox_container);
         mPaperCheckBox = findViewById(R.id.checkbox_paper);
         mLocationCheckBox = findViewById(R.id.checkbox_location);
+        mEstablishmentCheckBox = findViewById(R.id.checkbox_inside);
         mCommentText = findViewById(R.id.comment_text);
+        mEstablishmentText = findViewById(R.id.inside_text);
 
         //Converting boolean from our checkboxes into integers for the database
-        int mGarbage, mContainer, mPaper;
+        int mGarbage, mContainer, mPaper, mEstablishment;
         if (mGarbageCheckBox.isChecked()) {
             mGarbage = 1;
         } else {
@@ -234,9 +253,16 @@ public class LocationEntry extends AppCompatActivity implements GoogleApiClient.
         } else {
             mPaper = 0;
         }
+        if (mEstablishmentCheckBox.isChecked()) {
+            mEstablishment = 1;
+        } else {
+            mEstablishment = 0;
+        }
 
         //Get the text from comments edit text
         String mComment = mCommentText.getText().toString().trim();
+        String mEstablishmentComment = mEstablishmentText.getText().toString().trim();
+
         //Current date and time using the format declared at the beginning
         final String mCurrentDateTime = mDateFormat.format(Calendar.getInstance().getTime());
 
@@ -247,7 +273,9 @@ public class LocationEntry extends AppCompatActivity implements GoogleApiClient.
         values.put(com.example.android.datacollection.Database.LocationContract.LocationEntry.COLUMN_LOCATION_GARBAGE, mGarbage);
         values.put(com.example.android.datacollection.Database.LocationContract.LocationEntry.COLUMN_LOCATION_CONTAINER, mContainer);
         values.put(com.example.android.datacollection.Database.LocationContract.LocationEntry.COLUMN_LOCATION_PAPER, mPaper);
+        values.put(com.example.android.datacollection.Database.LocationContract.LocationEntry.COLUMN_LOCATION_ESTABLISHMENT, mEstablishment);
         values.put(com.example.android.datacollection.Database.LocationContract.LocationEntry.COLUMN_LOCATION_COMMENT, mComment);
+        values.put(com.example.android.datacollection.Database.LocationContract.LocationEntry.COLUMN_LOCATION_ESTABLISHMENT_COMMENT, mEstablishmentComment);
         values.put(com.example.android.datacollection.Database.LocationContract.LocationEntry.COLUMN_LOCATION_DATE, mCurrentDateTime);
 
         // Insert a new location into the provider, returning the content URI for the new location.

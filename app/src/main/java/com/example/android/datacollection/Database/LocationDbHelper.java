@@ -51,6 +51,8 @@ public class LocationDbHelper extends SQLiteOpenHelper {
                 LocationEntry.COLUMN_LOCATION_GARBAGE + " INTEGER NOT NULL DEFAULT 0, " +
                 LocationEntry.COLUMN_LOCATION_CONTAINER + " INTEGER NOT NULL DEFAULT 0, " +
                 LocationEntry.COLUMN_LOCATION_PAPER + " INTEGER NOT NULL DEFAULT 0, " +
+                LocationEntry.COLUMN_LOCATION_ESTABLISHMENT + " INTEGER NOT NULL DEFAULT 0, " +
+                LocationEntry.COLUMN_LOCATION_ESTABLISHMENT_COMMENT + " TEXT, " +
                 LocationEntry.COLUMN_LOCATION_COMMENT + " TEXT, " +
                 LocationEntry.COLUMN_LOCATION_DATE + " TEXT);";
 

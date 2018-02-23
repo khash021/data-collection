@@ -41,7 +41,7 @@ public class LocationEntry extends AppCompatActivity implements GoogleApiClient.
     //The TextView that displays the current location
     private GoogleApiClient mGoogleApiClient;
     //Date and time format and date instance
-    final DateFormat dateFormat = new SimpleDateFormat("MM.dd.yyyy 'at' HH:mm:ss z");
+    private final DateFormat mDateFormat = new SimpleDateFormat("MM.dd.yyyy 'at' HH:mm:ss z");
     //Location data
     private double mLat, mLon;
     //Checkboxes, and EditTexts
@@ -209,7 +209,8 @@ public class LocationEntry extends AppCompatActivity implements GoogleApiClient.
 
         //Get the text from comments edit text
         String mComment = mCommentText.getText().toString().trim();
-        final String mCurrentDateTime = dateFormat.format(Calendar.getInstance().getTime());
+        //Current date and time using the format declared at the beginning
+        final String mCurrentDateTime = mDateFormat.format(Calendar.getInstance().getTime());
 
         // Create a new map of values,
         ContentValues values = new ContentValues();

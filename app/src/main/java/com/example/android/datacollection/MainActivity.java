@@ -80,6 +80,17 @@ public class MainActivity extends AppCompatActivity  {
                 displayDatabaseInfo();
             }
         });//onClickListener - Delete All
+
+        //Show Database button
+        Button showDatabaseButton = findViewById(R.id.show_database);
+        showDatabaseButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //Open the LocationView activity
+                Intent intent = new Intent(MainActivity.this, LocationView.class);
+                startActivity(intent);
+            }
+        });//onClickListener - show database
     } //OnCreate
 
     @Override

@@ -33,6 +33,15 @@
             android:name="android.support.PARENT_ACTIVITY"
             android:value=".MainActivity" />
         </activity>
+        <activity
+            android:name=".LocationView"
+            android:label="View Data"
+            android:parentActivityName=".MainActivity" >
+            //Providing up navigation
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainActivity" />
+        </activity>
         <provider
             android:name=".Database.LocationProvider"
             android:authorities="com.example.android.datacollection"

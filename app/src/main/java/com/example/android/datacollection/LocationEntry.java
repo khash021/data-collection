@@ -55,7 +55,7 @@ public class LocationEntry extends AppCompatActivity implements GoogleApiClient.
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d(TAG, "onCreate() called");
-        setContentView(R.layout.data_entry);
+        setContentView(R.layout.location_entry);
 
         //Building a GoogleApiClient on
         mGoogleApiClient = new GoogleApiClient.Builder(this)

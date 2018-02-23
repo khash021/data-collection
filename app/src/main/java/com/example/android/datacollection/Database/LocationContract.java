@@ -126,7 +126,7 @@ public class LocationContract {
          *
          * Type: TEXT
          */
-        public final static String COLUMN_LOCATION_DATE = "date-time";
+        public final static String COLUMN_LOCATION_DATE = "date_time";
 
 
     }//LocationEntry

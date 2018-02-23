@@ -38,11 +38,11 @@ public class LocationDbHelper extends SQLiteOpenHelper {
 
         Log.d(LOG_TAG, "onCreate() called");
         // Create a String that contains the SQL statement to create the locations table
-        /*
-        Remember the SQLite command:
-        CREATE TABLE <table name> (<column_name> <column_datatype>, .....)
-        We are doing the same thing except we make it a String constant so we can just pass in the
-        String to the method (execSQL) instead of writing it everytime
+        /**
+         *  Remember the SQLite command:
+            CREATE TABLE <table name> (<column_name> <column_datatype>, .....)
+            We are doing the same thing except we make it a String constant so we can just pass in the
+            String to the method (execSQL) instead of writing it everytime
          */
         String SQL_CREATE_DATA_TABLE = "CREATE TABLE " + LocationEntry.TABLE_NAME + " (" +
                 LocationEntry._ID + " INTEGER PRIMARY KEY, " +
@@ -51,19 +51,20 @@ public class LocationDbHelper extends SQLiteOpenHelper {
                 LocationEntry.COLUMN_LOCATION_GARBAGE + " INTEGER NOT NULL DEFAULT 0, " +
                 LocationEntry.COLUMN_LOCATION_CONTAINER + " INTEGER NOT NULL DEFAULT 0, " +
                 LocationEntry.COLUMN_LOCATION_PAPER + " INTEGER NOT NULL DEFAULT 0, " +
-                LocationEntry.COLUMN_LOCATION_COMMENT + " TEXT);";
+                LocationEntry.COLUMN_LOCATION_COMMENT + " TEXT, " +
+                LocationEntry.COLUMN_LOCATION_DATE + " TEXT);";
 
-        // Execute the SQL statement
-        //Note; execSQL is not a static method and we run that on the SQLiteDatabase object (db)
-        //that was passed in as an input argument in the onCreate method
+        /**
+         *    Execute the SQL statement
+         *    Note; execSQL is not a static method and we run that on the SQLiteDatabase object (db)
+         *    that was passed in as an input argument in the onCreate method
+         */
         db.execSQL(SQL_CREATE_DATA_TABLE);
         Log.d(LOG_TAG, "Table Created");
-
     }//onCreate
 
     @Override
     public void onUpgrade(SQLiteDatabase DB, int oldVersion, int newVersion) {
         // The database is still at version 1, so there's nothing to do be done here.
-
     }//onUpgrade
 }//main

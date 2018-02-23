@@ -42,7 +42,6 @@ public class LocationEntry extends AppCompatActivity implements GoogleApiClient.
     private GoogleApiClient mGoogleApiClient;
     //Date and time format and date instance
     final DateFormat dateFormat = new SimpleDateFormat("MM.dd.yyyy 'at' HH:mm:ss z");
-    final String currentDateTime = dateFormat.format(Calendar.getInstance().getTime());
     //Location data
     private double mLat, mLon;
     //Checkboxes, and EditTexts
@@ -210,6 +209,7 @@ public class LocationEntry extends AppCompatActivity implements GoogleApiClient.
 
         //Get the text from comments edit text
         String mComment = mCommentText.getText().toString().trim();
+        final String mCurrentDateTime = dateFormat.format(Calendar.getInstance().getTime());
 
         // Create a new map of values,
         ContentValues values = new ContentValues();
@@ -219,6 +219,7 @@ public class LocationEntry extends AppCompatActivity implements GoogleApiClient.
         values.put(com.example.android.datacollection.Database.LocationContract.LocationEntry.COLUMN_LOCATION_CONTAINER, mContainer);
         values.put(com.example.android.datacollection.Database.LocationContract.LocationEntry.COLUMN_LOCATION_PAPER, mPaper);
         values.put(com.example.android.datacollection.Database.LocationContract.LocationEntry.COLUMN_LOCATION_COMMENT, mComment);
+        values.put(com.example.android.datacollection.Database.LocationContract.LocationEntry.COLUMN_LOCATION_DATE, mCurrentDateTime);
 
         // Insert a new location into the provider, returning the content URI for the new location.
         Uri newUri = getContentResolver().insert(com.example.android.datacollection.Database.LocationContract.LocationEntry.CONTENT_URI, values);

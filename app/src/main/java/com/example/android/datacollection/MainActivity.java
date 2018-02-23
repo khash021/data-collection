@@ -13,7 +13,6 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.android.datacollection.Database.DataDbHelper;
 import com.example.android.datacollection.Database.LocationContract.LocationEntry;
 
 public class MainActivity extends AppCompatActivity  {
@@ -23,10 +22,6 @@ public class MainActivity extends AppCompatActivity  {
     private final String TAG = "Main Activity";
     //Request location constant for location permission
     static final int REQUEST_LOCATION = 0;
-    //Declaring the Database helper object
-    private DataDbHelper mDbHelper;
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,8 +50,7 @@ public class MainActivity extends AppCompatActivity  {
             // result of the request.
         } //permission
 
-
-        //Enter data button
+        //Enter data button (this takes us to the DataEntry activity
         Button enterDataButton = findViewById(R.id.enter_data);
         enterDataButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -68,13 +62,13 @@ public class MainActivity extends AppCompatActivity  {
             }
         }); //onClickListener-enter data
 
-
-        //Delete button
+        //Delete-all button
         Button deleteAllButton = findViewById(R.id.delete_all);
         deleteAllButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                //By passing in 1 as the whereClause, it will delete all rows and return the number
+                //of rows deleted.
                 String whereClause = "1";
                 int result = getContentResolver().delete(LocationEntry.CONTENT_URI,
                         whereClause, null);
@@ -86,19 +80,9 @@ public class MainActivity extends AppCompatActivity  {
                                 "\nnumber of deleted rows: " + result,
                         Toast.LENGTH_SHORT).show();
                 displayDatabaseInfo();
-
             }
         });//onClickListener - Delete All
-
-        // To access our database, we instantiate our subclass of SQLiteOpenHelper
-        // and pass the context, which is the current activity.
-        mDbHelper = new DataDbHelper(this);
-
-
-
     } //OnCreate
-
-
 
     @Override
     protected void onStart() {
@@ -106,7 +90,6 @@ public class MainActivity extends AppCompatActivity  {
         super.onStart();
         displayDatabaseInfo();
     }
-
 
     @Override
     protected void onPause() {
@@ -140,7 +123,6 @@ public class MainActivity extends AppCompatActivity  {
         );
 
         TextView counterTextView = findViewById(R.id.data_counter);
-        TextView arrayCounterTextView = findViewById(R.id.data_array_counter);
 
         try {
             counterTextView.setText("Current number of data-points in database: " +

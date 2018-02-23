@@ -31,13 +31,15 @@ import java.util.Calendar;
 
 /**
  * Created by Khashayar on 2/17/2018.
- * This class is for entering data
+ * This class is for entering the location data.
  */
 
 public class DataEntry extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener, LocationListener {
 
-    //Variables
+    /**
+     *  Variables
+     */
 
     //Tag to be used for all our logs
     private final String TAG = "Data Entry";
@@ -45,18 +47,21 @@ public class DataEntry extends AppCompatActivity implements GoogleApiClient.Conn
     private GoogleApiClient mGoogleApiClient;
     //LocationRequest object
     private LocationRequest mLocationRequest;
-
-    //Date and time format and date instance
+    //Date and time (to be used for entering and modifying location data
     final DateFormat dateFormat = new SimpleDateFormat("MM.dd.yyyy 'at' HH:mm:ss z");
     final String currentDateTime = dateFormat.format(Calendar.getInstance().getTime());
-
     //Location data
     private double mLat, mLon;
+    //Checkboxes, buttons, and EditText. Since they are used by different methods
+    CheckBox mGarbageCheckBox = findViewById(R.id.checkbox_garbage);
+    CheckBox mContainerCheckBox = findViewById(R.id.checkbox_container);
+    CheckBox mPaperCheckBox = findViewById(R.id.checkbox_paper);
+    CheckBox mLocationCheckBox = findViewById(R.id.checkbox_location);
+    EditText mCommentText = findViewById(R.id.comment_text);
 
-
-
-    CheckBox mGarbageCheckBox, mContainerCheckBox, mPaperCheckBox, mLocationCheckBox;
-    EditText mCommentText;
+    Button resetButton = findViewById(R.id.reset_button);
+    Button submitButton = findViewById(R.id.submit_button);
+    Button undoButton = findViewById(R.id.undo_button);
 
 
     @Override
@@ -75,21 +80,6 @@ public class DataEntry extends AppCompatActivity implements GoogleApiClient.Conn
                 .addOnConnectionFailedListener(this)
                 //Finally build the ApiClient
                 .build();
-
-
-
-        //creates variables for the checkboxes
-        mGarbageCheckBox = findViewById(R.id.checkbox_garbage);
-        mContainerCheckBox = findViewById(R.id.checkbox_container);
-        mPaperCheckBox = findViewById(R.id.checkbox_paper);
-        mLocationCheckBox = findViewById(R.id.checkbox_location);
-        mCommentText = findViewById(R.id.comment_text);
-
-        //Buttons
-        Button resetButton = findViewById(R.id.reset_button);
-        Button submitButton = findViewById(R.id.submit_button);
-        Button undoButton = findViewById(R.id.undo_button);
-
 
         //onClick listener for reset button
         resetButton.setOnClickListener(new View.OnClickListener() {
@@ -114,8 +104,6 @@ public class DataEntry extends AppCompatActivity implements GoogleApiClient.Conn
                 }
             }
         });//Reset - onClickListener
-
-
 
         //onClickListener for submit button
         submitButton.setOnClickListener(new View.OnClickListener() {
@@ -155,16 +143,13 @@ public class DataEntry extends AppCompatActivity implements GoogleApiClient.Conn
             }
         });//onClickListener - undo
 
-
     } //OnCreate
-
 
     /**
      * Temporary helper method to display information in the onscreen TextView about the number of
      * Data points in our database
      */
     private void displayDatabaseInfo() {
-
 
         //this is what we are going to pass into the Query method. This String is similar
         //to the statement after SELECT, we tell it which columns we want, here we want everything
@@ -195,15 +180,10 @@ public class DataEntry extends AppCompatActivity implements GoogleApiClient.Conn
 
     /**
      * Get user input from editor and save new pet into database.
+     * Here we convert our booleans into integer to be saved in the database
+     *          True = 1  and   False = 0
      */
     private void insertData() {
-
-        //Setting up the Checkboxes variables
-        mGarbageCheckBox = findViewById(R.id.checkbox_garbage);
-        mContainerCheckBox = findViewById(R.id.checkbox_container);
-        mPaperCheckBox = findViewById(R.id.checkbox_paper);
-        mLocationCheckBox = findViewById(R.id.checkbox_location);
-        mCommentText = findViewById(R.id.comment_text);
 
         //Converting boolean from our checkboxes into integers for the database
         int mGarbage, mContainer, mPaper;
@@ -270,7 +250,7 @@ public class DataEntry extends AppCompatActivity implements GoogleApiClient.Conn
         );
 
         //Here we need to check and see if there is at least one item in the database; otherwise
-        //if we try to delete the last row which doesnt exist, the app crashes.
+        //if we try to delete the last row which doesn't exist, the app crashes.
         if (cursor.getCount() <= 0) {
             Toast.makeText(this, "Database is empty.", Toast.LENGTH_SHORT).show();
             return;
@@ -301,7 +281,6 @@ public class DataEntry extends AppCompatActivity implements GoogleApiClient.Conn
         }
 
     }//undo
-
 
     @Override
     protected void onStart() {
@@ -349,13 +328,14 @@ public class DataEntry extends AppCompatActivity implements GoogleApiClient.Conn
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
 
         Log.d(TAG, "mLocationRequest: " + mLocationRequest);
+        /**
+         * We could just simply put the line LocationServices.Fused.... here; but this way we first
+         * make sure that we have permission.
+         * Here we check to see if we have permission and then we can start requesting our location
+         * updates.
+         * Add support for runtime permission check
+         */
 
-//        LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
-
-        //We could just simply put the line LocationServices.Fused.... here; but this way we first
-        //make sure that we have permission
-        // Here we check to see if we have permission and then we can start requesting our location updates
-        // Add support for runtime permission check
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
             // Check Permissions Now
@@ -368,8 +348,10 @@ public class DataEntry extends AppCompatActivity implements GoogleApiClient.Conn
         }
     } //onConnected
 
-    //This is where we define what to be done when the location changes (based on the interval we set
-    //in onConnected. Here for example we update the mLat/log in the TextView
+    /**
+     * This is where we define what to be done when the location changes (based on the interval we set
+     in onConnected. Here for example we update the mLat/log in the TextView
+     */
     @Override
     public void onLocationChanged(Location location) {
         CheckBox locationCheckBox = findViewById(R.id.checkbox_location);
@@ -385,7 +367,6 @@ public class DataEntry extends AppCompatActivity implements GoogleApiClient.Conn
                 "\nLongitude: "+Double.toString(location.getLongitude()));
     } //onLocationChanged
 
-
     @Override
     public void onConnectionSuspended(int i)
     {
@@ -397,13 +378,4 @@ public class DataEntry extends AppCompatActivity implements GoogleApiClient.Conn
         Log.i(TAG, "GoogleApiClient connection failed");
     } //onConnectionFailed
 
-//    @Override
-//    public boolean onCreateOptionsMenu(Menu menu) {
-//        // Inflate the menu options from the res/menu/menu_editor.xml file.
-//        // This adds menu items to the app bar.
-//        getMenuInflater().inflate(R.menu.menu_data_entry, menu);
-//        return true;
-//    } //onCreateOptionsMenu
-
-
-} //Main Activity
+} //DataEntry Class

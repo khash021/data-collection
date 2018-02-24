@@ -147,6 +147,6 @@ public class LocationContract {
 
 
 
-    }//LocationEntry
+    }//LocationEnter
 
 }//main

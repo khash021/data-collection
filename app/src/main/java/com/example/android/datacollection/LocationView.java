@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.example.android.datacollection.Database.LocationContract.LocationEntry;
 
@@ -50,6 +51,15 @@ public class LocationView extends AppCompatActivity implements LoaderManager.Loa
 
         //Kick off the loader
         getLoaderManager().initLoader(LOCATION_LOADER, null, this);
+
+        locationListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                Toast.makeText(LocationView.this, "Id is: " + Long.toString(id),
+                        Toast.LENGTH_SHORT).show();
+                return true;
+            }
+        });
 
         //Setup item click listener for location data
         locationListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {

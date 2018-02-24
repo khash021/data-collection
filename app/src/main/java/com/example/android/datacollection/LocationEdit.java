@@ -14,6 +14,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -60,6 +61,25 @@ public class LocationEdit extends AppCompatActivity implements LoaderManager.Loa
 
         // Initialize a loader to read the location data from the database
         getLoaderManager().initLoader(EXISTING_LOCATION_LOADER, null, this);
+
+        /**
+         * If the location is inside a establishment, and the user turns the checkbox off in edit
+         * mode, they have to manually also delete the comment, since the app does not let them
+         * save a location with establishment comment if the checkbox is not on, so the user need
+         * to manually remove the comment. Here we set this event listener so when the user removes
+         * the establishment, it automatically deletes the comment.
+         *
+         * here isChecked boolean object is the new state, and we want to act on the false, meaning
+         * the user has turned it off
+         */
+        mEstablishmentCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (!isChecked) {
+                    mEstablishmentText.setText("");
+                }
+            }
+        });//setOnCheckedChangeListener - establishment 
 
         //maps Button
         mMapsButton = findViewById(R.id.edit_map_button);
@@ -163,7 +183,7 @@ public class LocationEdit extends AppCompatActivity implements LoaderManager.Loa
 
         //Get the text from comments edit text
         String mComment = mCommentText.getText().toString().trim();
-        mComment += "\nUpdated on " + com.example.android.datacollection.LocationEntry.mDateFormat.format(Calendar.getInstance().getTime());
+        mComment += "\nUpdated on " + LocationEnter.mDateFormat.format(Calendar.getInstance().getTime());
         String mEstablishmentComment = mEstablishmentText.getText().toString().trim();
 
         // Create a new map of values,

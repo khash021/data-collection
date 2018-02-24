@@ -80,7 +80,7 @@ public class LocationCursorAdapter extends CursorAdapter {
         int locationContainer = cursor.getInt(containerColumnIndex);
 
         // Populate fields with extracted properties
-        idTextView.setText(locationID);
+        idTextView.setText("ID: " + locationID);
         //We check for the boolean values here and only show them if they are true
         String garbage, container, paper;
         if (locationGarbage == 1) {

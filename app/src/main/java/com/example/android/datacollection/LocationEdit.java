@@ -183,10 +183,10 @@ public class LocationEdit extends AppCompatActivity implements LoaderManager.Loa
         );
 
         if (result == 0) {
-            //return true if the update was successful
+            //return false if the update was not successful
             return false;
         } else {
-            //return false if it was unsuccessful
+            //return true if the update was successful
             return true;
         }
 

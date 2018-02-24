@@ -187,36 +187,40 @@ public class LocationProvider extends ContentProvider {
          *  in, and we can update it then.
          */
 
-        //This checks if the ContentValues has any value associated to garbage
-        if (values.containsKey(LocationEntry.COLUMN_LOCATION_GARBAGE)) {
-            //This will only gets executed if there is any value associated with garbage
-            int garbage = values.getAsInteger(LocationEntry.COLUMN_LOCATION_GARBAGE);
-        }//if
+        //We need to first extract the ID of the location we are updating.
+        selection = LocationEntry._ID + "=?";
+        selectionArgs = new String[] { String.valueOf(ContentUris.parseId(uri)) };
 
-        if (values.containsKey(LocationEntry.COLUMN_LOCATION_CONTAINER)) {
-            int container = values.getAsInteger(LocationEntry.COLUMN_LOCATION_CONTAINER);
-        }//if
-
-        if (values.containsKey(LocationEntry.COLUMN_LOCATION_PAPER)) {
-            int paper = values.getAsInteger(LocationEntry.COLUMN_LOCATION_PAPER);
-        }//if
-
-        if (values.containsKey(LocationEntry.COLUMN_LOCATION_COMMENT)) {
-            String comment = values.getAsString(LocationEntry.COLUMN_LOCATION_PAPER);
-        }//if
-
-        if (values.containsKey(LocationEntry.COLUMN_LOCATION_ESTABLISHMENT)) {
-            int establishment = values.getAsInteger(LocationEntry.COLUMN_LOCATION_ESTABLISHMENT);
-        }//if
-
-        if (values.containsKey(LocationEntry.COLUMN_LOCATION_ESTABLISHMENT_COMMENT)) {
-            String establishmentComment = values.getAsString(LocationEntry.COLUMN_LOCATION_ESTABLISHMENT_COMMENT);
-        }//if
-
-        // If there are no values to update, then don't try to update the database
-        if (values.size() == 0) {
-            return 0;
-        }
+//        //This checks if the ContentValues has any value associated to garbage
+//        if (values.containsKey(LocationEntry.COLUMN_LOCATION_GARBAGE)) {
+//            //This will only gets executed if there is any value associated with garbage
+//            int garbage = values.getAsInteger(LocationEntry.COLUMN_LOCATION_GARBAGE);
+//        }//if
+//
+//        if (values.containsKey(LocationEntry.COLUMN_LOCATION_CONTAINER)) {
+//            int container = values.getAsInteger(LocationEntry.COLUMN_LOCATION_CONTAINER);
+//        }//if
+//
+//        if (values.containsKey(LocationEntry.COLUMN_LOCATION_PAPER)) {
+//            int paper = values.getAsInteger(LocationEntry.COLUMN_LOCATION_PAPER);
+//        }//if
+//
+//        if (values.containsKey(LocationEntry.COLUMN_LOCATION_COMMENT)) {
+//            String comment = values.getAsString(LocationEntry.COLUMN_LOCATION_PAPER);
+//        }//if
+//
+//        if (values.containsKey(LocationEntry.COLUMN_LOCATION_ESTABLISHMENT)) {
+//            int establishment = values.getAsInteger(LocationEntry.COLUMN_LOCATION_ESTABLISHMENT);
+//        }//if
+//
+//        if (values.containsKey(LocationEntry.COLUMN_LOCATION_ESTABLISHMENT_COMMENT)) {
+//            String establishmentComment = values.getAsString(LocationEntry.COLUMN_LOCATION_ESTABLISHMENT_COMMENT);
+//        }//if
+//
+//        // If there are no values to update, then don't try to update the database
+//        if (values.size() == 0) {
+//            return 0;
+//        }
 
         //Access database using the mDbHelper variable that we initialized in the onCreate, and get
         //the SQL object from the DbHelper

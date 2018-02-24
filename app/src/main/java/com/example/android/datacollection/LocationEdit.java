@@ -10,6 +10,8 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -79,7 +81,49 @@ public class LocationEdit extends AppCompatActivity implements LoaderManager.Loa
                     mEstablishmentText.setText("");
                 }
             }
-        });//setOnCheckedChangeListener - establishment 
+        });//setOnCheckedChangeListener - establishment
+
+        /**
+         * If the user starts writing a comment in establishment, it automatically turns the check
+         * box on, and vice versa.
+         */
+        mEstablishmentText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                /**
+                 * Gets called when:
+                 * within s, the count characters beginning at start are about to be replaced by new
+                 * text with length after. It is an error to attempt to make changes to s
+                 * from this callback.
+                 */
+            }//beforeTextChanged
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                /**
+                 * Notify that within s, the count characters beginning at start have just replaced
+                 * old text that had length before. It is an error to attempt to make changes to s
+                 * from this callback
+                 */
+                //Turn the checkbox on if they start writing
+                if (s.length() > 0 && !mEstablishmentCheckBox.isChecked()) {
+                    mEstablishmentCheckBox.setChecked(true);
+                }
+                //turn the checkbox off if they delete it
+                if (s.length() < 1 && mEstablishmentCheckBox.isChecked()) {
+                    mEstablishmentCheckBox.setChecked(false);
+                }
+            }//onTextChanged
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                /**
+                 * Gets called when:
+                 * somewhere within s, the text has been changed
+                 */
+
+            }//afterTextChanged
+        });//mEstablishmentText text change listener
 
         //maps Button
         mMapsButton = findViewById(R.id.edit_map_button);

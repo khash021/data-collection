@@ -75,7 +75,8 @@
         android:hint="Enter comment (optional)"
         android:textSize="10dp"
         android:layout_marginRight="36dp"
-        android:layout_marginLeft="36dp"/>
+        android:layout_marginLeft="36dp"
+        android:inputType="textCapSentences"/>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -97,7 +98,8 @@
             android:textSize="10dp"
             android:layout_marginLeft="16dp"
             android:layout_weight="1"
-            android:layout_marginRight="36dp"/>
+            android:layout_marginRight="36dp"
+            android:inputType="textCapSentences"/>
 
     </LinearLayout>
 

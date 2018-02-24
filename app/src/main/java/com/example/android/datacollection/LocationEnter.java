@@ -10,10 +10,13 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -86,6 +89,66 @@ public class LocationEnter extends AppCompatActivity implements GoogleApiClient.
         Button undoButton = findViewById(R.id.undo_button);
         Button mapButton = findViewById(R.id.map_button);
 
+        /**
+         * If the location is inside a establishment, and the user turns the checkbox off in edit
+         * mode, they have to manually also delete the comment, since the app does not let them
+         * save a location with establishment comment if the checkbox is not on, so the user need
+         * to manually remove the comment. Here we set this event listener so when the user removes
+         * the establishment, it automatically deletes the comment.
+         *
+         * here isChecked boolean object is the new state, and we want to act on the false, meaning
+         * the user has turned it off
+         */
+        mEstablishmentCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (!isChecked) {
+                    mEstablishmentText.setText("");
+                }
+            }
+        });//setOnCheckedChangeListener - establishment
+
+        /**
+         * If the user starts writing a comment in establishment, it automatically turns the check
+         * box on, and vice versa.
+         */
+        mEstablishmentText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                /**
+                 * Gets called when:
+                 * within s, the count characters beginning at start are about to be replaced by new
+                 * text with length after. It is an error to attempt to make changes to s
+                 * from this callback.
+                 */
+            }//beforeTextChanged
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                /**
+                 * Notify that within s, the count characters beginning at start have just replaced
+                 * old text that had length before. It is an error to attempt to make changes to s
+                 * from this callback
+                 */
+                //Turn the checkbox on if they start writing
+                if (s.length() > 0 && !mEstablishmentCheckBox.isChecked()) {
+                    mEstablishmentCheckBox.setChecked(true);
+                }
+                //turn the checkbox off if they delete it
+                if (s.length() < 1 && mEstablishmentCheckBox.isChecked()) {
+                    mEstablishmentCheckBox.setChecked(false);
+                }
+            }//onTextChanged
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                /**
+                 * Gets called when:
+                 * somewhere within s, the text has been changed
+                 */
+
+            }//afterTextChanged
+        });//mEstablishmentText text change listener
 
         //onClick listener for reset button
         resetButton.setOnClickListener(new View.OnClickListener() {

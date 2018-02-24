@@ -120,6 +120,14 @@ public class LocationProvider extends ContentProvider {
                 throw new IllegalArgumentException("Cannot query unknown URI " + uri);
 
         }//switch
+
+        /**
+         *    Set notification URI on the Cursor, so we know what content URI the Cursor was
+         *    created for. If the data at this URI changes, then we know we need to
+         *    update the Cursor.
+         */
+
+        cursor.setNotificationUri(getContext().getContentResolver(), uri);
         return cursor;
     }//query
 
@@ -162,6 +170,9 @@ public class LocationProvider extends ContentProvider {
             return null;
         } //if
 
+        // Notify all listeners that the data has changed for the location content URI
+        getContext().getContentResolver().notifyChange(uri, null);
+
         // Once we know the ID of the new row in the table,
         // return the new URI with the ID appended to the end of it
         return ContentUris.withAppendedId(uri, newRowId);
@@ -191,37 +202,6 @@ public class LocationProvider extends ContentProvider {
         selection = LocationEntry._ID + "=?";
         selectionArgs = new String[] { String.valueOf(ContentUris.parseId(uri)) };
 
-//        //This checks if the ContentValues has any value associated to garbage
-//        if (values.containsKey(LocationEntry.COLUMN_LOCATION_GARBAGE)) {
-//            //This will only gets executed if there is any value associated with garbage
-//            int garbage = values.getAsInteger(LocationEntry.COLUMN_LOCATION_GARBAGE);
-//        }//if
-//
-//        if (values.containsKey(LocationEntry.COLUMN_LOCATION_CONTAINER)) {
-//            int container = values.getAsInteger(LocationEntry.COLUMN_LOCATION_CONTAINER);
-//        }//if
-//
-//        if (values.containsKey(LocationEntry.COLUMN_LOCATION_PAPER)) {
-//            int paper = values.getAsInteger(LocationEntry.COLUMN_LOCATION_PAPER);
-//        }//if
-//
-//        if (values.containsKey(LocationEntry.COLUMN_LOCATION_COMMENT)) {
-//            String comment = values.getAsString(LocationEntry.COLUMN_LOCATION_PAPER);
-//        }//if
-//
-//        if (values.containsKey(LocationEntry.COLUMN_LOCATION_ESTABLISHMENT)) {
-//            int establishment = values.getAsInteger(LocationEntry.COLUMN_LOCATION_ESTABLISHMENT);
-//        }//if
-//
-//        if (values.containsKey(LocationEntry.COLUMN_LOCATION_ESTABLISHMENT_COMMENT)) {
-//            String establishmentComment = values.getAsString(LocationEntry.COLUMN_LOCATION_ESTABLISHMENT_COMMENT);
-//        }//if
-//
-//        // If there are no values to update, then don't try to update the database
-//        if (values.size() == 0) {
-//            return 0;
-//        }
-
         //Access database using the mDbHelper variable that we initialized in the onCreate, and get
         //the SQL object from the DbHelper
         SQLiteDatabase database = mDbHelper.getWritableDatabase();
@@ -248,17 +228,26 @@ public class LocationProvider extends ContentProvider {
         SQLiteDatabase database = mDbHelper.getWritableDatabase();
 
         int match = sUriMatcher.match(uri);
+        int rowsDeleted;
 
         switch (match) {
             case LOCATIONS:
-                return database.delete(LocationEntry.TABLE_NAME, selection, selectionArgs);
+                rowsDeleted = database.delete(LocationEntry.TABLE_NAME, selection, selectionArgs);
+                break;
             case LOCATION_ID:
                 selection = LocationEntry._ID + "=?";
                 selectionArgs = new String[] { String.valueOf(ContentUris.parseId(uri)) };
-                return database.delete(LocationEntry.TABLE_NAME, selection, selectionArgs);
+                rowsDeleted = database.delete(LocationEntry.TABLE_NAME, selection, selectionArgs);
+                break;
             default:
                 throw new IllegalArgumentException("Deletion is not supported for " + uri);
         }//switch
+        // If 1 or more rows were deleted, then notify all listeners that the data at the
+        // given URI has changed
+        if (rowsDeleted != 0) {
+            getContext().getContentResolver().notifyChange(uri, null);
+        }//if
+        return rowsDeleted;
     }//delete
 
     /**

@@ -107,4 +107,12 @@ public class LocationView extends AppCompatActivity implements LoaderManager.Loa
         //callback called when the data needs to be deleted
         mCursorAdapter.swapCursor(null);
     }//onLoaderReset
+
+    @Override
+    protected void onStart() {
+        Log.v(TAG, "onStart called");
+        super.onStart();
+    }
 }//LocationView Class
+
+

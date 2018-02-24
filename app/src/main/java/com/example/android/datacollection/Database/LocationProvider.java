@@ -169,12 +169,69 @@ public class LocationProvider extends ContentProvider {
     } //insertLocation
 
     /**
-     * Updates the data at the given selection and selection arguments, with the new ContentValues.
+     * Update location in the database with the given content values. Apply the changes to the rows
+     * specified in the selection and selection arguments (which could be 0 or 1 or more locations).
+     * Return the number of rows that were successfully updated.
      *
+     * Location at this point cannot be updated from here, since it was automatically added using
+     * the gps.
+     *
+     * This is mainly for updating checkboxes, and comments.
      */
     public int update( Uri uri, ContentValues values,  String selection,  String[] selectionArgs) {
-        //TODO: add the code to this so I can use the update
-        return 0;
+
+        /**
+         *  Since this is update, not all the values might be present. Only the ones that are going
+         *  to be changed are passed in the ContentValues. We need to use the containsKey method on
+         *  ContentValues. This return true if thr object has a value for tha name that was passed
+         *  in, and we can update it then.
+         */
+
+        //This checks if the ContentValues has any value associated to garbage
+        if (values.containsKey(LocationEntry.COLUMN_LOCATION_GARBAGE)) {
+            //This will only gets executed if there is any value associated with garbage
+            int garbage = values.getAsInteger(LocationEntry.COLUMN_LOCATION_GARBAGE);
+        }//if
+
+        if (values.containsKey(LocationEntry.COLUMN_LOCATION_CONTAINER)) {
+            int container = values.getAsInteger(LocationEntry.COLUMN_LOCATION_CONTAINER);
+        }//if
+
+        if (values.containsKey(LocationEntry.COLUMN_LOCATION_PAPER)) {
+            int paper = values.getAsInteger(LocationEntry.COLUMN_LOCATION_PAPER);
+        }//if
+
+        if (values.containsKey(LocationEntry.COLUMN_LOCATION_COMMENT)) {
+            String comment = values.getAsString(LocationEntry.COLUMN_LOCATION_PAPER);
+        }//if
+
+        if (values.containsKey(LocationEntry.COLUMN_LOCATION_ESTABLISHMENT)) {
+            int establishment = values.getAsInteger(LocationEntry.COLUMN_LOCATION_ESTABLISHMENT);
+        }//if
+
+        if (values.containsKey(LocationEntry.COLUMN_LOCATION_ESTABLISHMENT_COMMENT)) {
+            String establishmentComment = values.getAsString(LocationEntry.COLUMN_LOCATION_ESTABLISHMENT_COMMENT);
+        }//if
+
+        // If there are no values to update, then don't try to update the database
+        if (values.size() == 0) {
+            return 0;
+        }
+
+        //Access database using the mDbHelper variable that we initialized in the onCreate, and get
+        //the SQL object from the DbHelper
+        SQLiteDatabase database = mDbHelper.getWritableDatabase();
+
+        //Update method returns an int, corresponding to the number of rows that was affected
+        int rowsUpdated  = database.update(LocationEntry.TABLE_NAME, values,selection, selectionArgs);
+
+        // If 1 or more rows were updated, then notify all listeners that the data at the
+        // given URI has changed
+        if (rowsUpdated != 0) {
+            getContext().getContentResolver().notifyChange(uri, null);
+        }//if
+
+        return rowsUpdated ;
     }//update
 
 

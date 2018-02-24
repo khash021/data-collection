@@ -28,6 +28,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
+
 /**
  * Created by Khashayar on 2/17/2018.
  * This class is for entering data
@@ -41,7 +42,7 @@ public class LocationEntry extends AppCompatActivity implements GoogleApiClient.
     //The TextView that displays the current location
     private GoogleApiClient mGoogleApiClient;
     //Date and time format and date instance
-    private final DateFormat mDateFormat = new SimpleDateFormat("MM.dd.yyyy 'at' HH:mm:ss z");
+    final static DateFormat mDateFormat = new SimpleDateFormat("MM.dd.yyyy 'at' HH:mm:ss z");
     //Location data. They are initialized to 0.0 to check if there is no location acquired in the
     //helper methods throughout this Class
     private double mLat = 0.0;

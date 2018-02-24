@@ -20,6 +20,8 @@ import android.widget.Toast;
 
 import com.example.android.datacollection.Database.LocationContract.LocationEntry;
 
+import java.util.Calendar;
+
 /**
  * Created by Khashayar on 2/23/2018.
  */
@@ -77,8 +79,15 @@ public class LocationEdit extends AppCompatActivity implements LoaderManager.Loa
                             mEstablishmentText.getText().toString().trim().length() > 0) ||
                             (!mEstablishmentCheckBox.isChecked() &&
                                     mEstablishmentText.getText().toString().trim().length() < 1)) {
-                        saveLocation();
-                        finish();
+                        boolean result = saveLocation();
+                        if (result) {
+                            Toast.makeText(LocationEdit.this,
+                                    "Location updated successfully",Toast.LENGTH_SHORT).show();
+                            finish();
+                        } else  {
+                            Toast.makeText(LocationEdit.this, "Error with updating",
+                                    Toast.LENGTH_SHORT).show();
+                        }
                     } else {
                         Toast.makeText(LocationEdit.this, "If the establishment" +
                                 " checkbox is ticked, there needs to be a comment; and vice versa",
@@ -95,6 +104,8 @@ public class LocationEdit extends AppCompatActivity implements LoaderManager.Loa
                 int result = getContentResolver().delete(mCurrentLocationUri, null , null);
                 //Check to see if the delete was successful
                 if (result == 1) {
+                    Toast.makeText(LocationEdit.this,
+                            "Location deleted", Toast.LENGTH_SHORT).show();
                     finish();
                 } else {
                     Toast.makeText(LocationEdit.this,
@@ -112,7 +123,13 @@ public class LocationEdit extends AppCompatActivity implements LoaderManager.Loa
         startActivity(intent);
     }//showOnGoogleMaps
 
-    private void saveLocation(){
+    /**
+     * This helper method updates the location data.
+     * Update is only possible for checkboxes and comments
+     * @return true if the update was successful, false otherwise.
+     */
+
+    private boolean saveLocation(){
         mGarbageCheckBox = findViewById(R.id.edit_checkbox_garbage);
         mContainerCheckBox = findViewById(R.id.edit_checkbox_container);
         mPaperCheckBox = findViewById(R.id.edit_checkbox_paper);
@@ -146,18 +163,32 @@ public class LocationEdit extends AppCompatActivity implements LoaderManager.Loa
 
         //Get the text from comments edit text
         String mComment = mCommentText.getText().toString().trim();
+        mComment += "\nUpdated on " + com.example.android.datacollection.LocationEntry.mDateFormat.format(Calendar.getInstance().getTime());
         String mEstablishmentComment = mEstablishmentText.getText().toString().trim();
 
         // Create a new map of values,
         ContentValues values = new ContentValues();
-        values.put(com.example.android.datacollection.Database.LocationContract.LocationEntry.COLUMN_LOCATION_GARBAGE, mGarbage);
-        values.put(com.example.android.datacollection.Database.LocationContract.LocationEntry.COLUMN_LOCATION_CONTAINER, mContainer);
-        values.put(com.example.android.datacollection.Database.LocationContract.LocationEntry.COLUMN_LOCATION_PAPER, mPaper);
-        values.put(com.example.android.datacollection.Database.LocationContract.LocationEntry.COLUMN_LOCATION_ESTABLISHMENT, mEstablishment);
-        values.put(com.example.android.datacollection.Database.LocationContract.LocationEntry.COLUMN_LOCATION_COMMENT, mComment);
-        values.put(com.example.android.datacollection.Database.LocationContract.LocationEntry.COLUMN_LOCATION_ESTABLISHMENT_COMMENT, mEstablishmentComment);
+        values.put(LocationEntry.COLUMN_LOCATION_GARBAGE, mGarbage);
+        values.put(LocationEntry.COLUMN_LOCATION_CONTAINER, mContainer);
+        values.put(LocationEntry.COLUMN_LOCATION_PAPER, mPaper);
+        values.put(LocationEntry.COLUMN_LOCATION_ESTABLISHMENT, mEstablishment);
+        values.put(LocationEntry.COLUMN_LOCATION_COMMENT, mComment);
+        values.put(LocationEntry.COLUMN_LOCATION_ESTABLISHMENT_COMMENT, mEstablishmentComment);
 
-        //TODO: finish this after creating the update() in LocationProvider
+        int result = getContentResolver().update(
+                mCurrentLocationUri,             //Uri
+                values,                     //Values to be updated
+                null,                //null will update all rows
+                null           //no where so we dont need selectionArgs
+        );
+
+        if (result == 0) {
+            //return true if the update was successful
+            return false;
+        } else {
+            //return false if it was unsuccessful
+            return true;
+        }
 
     }//saveLocation
 

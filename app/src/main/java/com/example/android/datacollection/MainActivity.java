@@ -27,6 +27,8 @@ public class MainActivity extends AppCompatActivity  {
         Log.d(TAG, "onCreate() called");
         setContentView(R.layout.activity_main);
 
+        setTitle("Main Menu");
+
         /**
          *  This is what gets the permission for the location on start up.
          *  Notice: that this activity is not using the location, but we check this here

@@ -173,12 +173,7 @@ public class LocationProvider extends ContentProvider {
      *
      */
     public int update( Uri uri, ContentValues values,  String selection,  String[] selectionArgs) {
-        /**
-         * We are not going to update data at this point. I feel like if there was an error in the input,
-         * it would be much wiser to delete the last data, and input it again. The error is choosing the
-         * wrong location from the list without any visual representation would create more errors.
-         * As a result, we are leaving this blank for now
-         */
+        //TODO: add the code to this so I can use the update
         return 0;
     }//update
 

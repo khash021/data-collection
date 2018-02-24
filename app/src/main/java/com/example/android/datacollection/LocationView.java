@@ -1,12 +1,17 @@
 package com.example.android.datacollection;
 
 import android.app.LoaderManager;
+import android.content.ContentUris;
 import android.content.CursorLoader;
+import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.example.android.datacollection.Database.LocationContract.LocationEntry;
@@ -45,6 +50,30 @@ public class LocationView extends AppCompatActivity implements LoaderManager.Loa
 
         //Kick off the loader
         getLoaderManager().initLoader(LOCATION_LOADER, null, this);
+
+        //Setup item click listener for location data
+        locationListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                //Create new Intent to go to {@link EditorActivity}
+                Intent intent = new Intent(LocationView.this, LocationEdit.class);
+
+                /**
+                 * From the content URi that represents the specific location that was clicked, by
+                 * appending the "id" (passed as input to this method) onto the
+                 * {@link LocationEntry#Content_URI}.
+                 * For example the URI would be "content://come.example.android.datacollection/locations/2"
+                 * if the location with ID 2 was clicked on
+                 */
+                Uri currentPetUri = ContentUris.withAppendedId(LocationEntry.CONTENT_URI, id);
+
+                //set the Uri on the data field of the intent
+                intent.setData(currentPetUri);
+
+                //Launch the {@link LocationEdit} to display data for the current pet
+                startActivity(intent);
+            }
+        });//onClickListener ListView
     }//onCreate
 
     @Override

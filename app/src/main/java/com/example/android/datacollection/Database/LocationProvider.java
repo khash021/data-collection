@@ -212,6 +212,7 @@ public class LocationProvider extends ContentProvider {
         // If 1 or more rows were updated, then notify all listeners that the data at the
         // given URI has changed
         if (rowsUpdated != 0) {
+            // Notify all listeners that the data has changed for the location content URI
             getContext().getContentResolver().notifyChange(uri, null);
         }//if
 
@@ -245,6 +246,7 @@ public class LocationProvider extends ContentProvider {
         // If 1 or more rows were deleted, then notify all listeners that the data at the
         // given URI has changed
         if (rowsDeleted != 0) {
+            //// Notify all listeners that the data has changed for the location content URI
             getContext().getContentResolver().notifyChange(uri, null);
         }//if
         return rowsDeleted;

@@ -189,39 +189,6 @@ public class LocationEntry extends AppCompatActivity implements GoogleApiClient.
     } //OnCreate
 
     /**
-     * Temporary helper method to display information in the onscreen TextView about the number of
-     * Data points in our database
-     */
-    private void displayDatabaseInfo() {
-
-        //this is what we are going to pass into the Query method. This String is similar
-        //to the statement after SELECT, we tell it which columns we want, here we want everything
-        String[] projection = {
-                com.example.android.datacollection.Database.LocationContract.LocationEntry._ID,
-        };
-
-        Cursor cursor = getContentResolver().query(
-                com.example.android.datacollection.Database.LocationContract.LocationEntry.CONTENT_URI,     //The content Uri
-                projection,               //The columns to return for each row
-                null,            //Selection criteria
-                null,         //Selection criteria
-                null            //The sort order for returned rows
-        );
-
-        TextView counterTextView = findViewById(R.id.data_counter);
-
-        try {
-            counterTextView.setText("Current number of data-points in database: " +
-                    cursor.getCount());
-
-        } finally {
-            // Always close the cursor when you're done reading from it. This releases all its
-            // resources and makes it invalid.
-            cursor.close();
-        } //finally
-    }//displayDatabaseInfo
-
-    /**
      * Get user input from editor and save new location into database.
      * The boolean values are converted to integer to be stored in the databse. Follows the
      * convention: True = 1 ; False = 0
@@ -288,11 +255,15 @@ public class LocationEntry extends AppCompatActivity implements GoogleApiClient.
             Toast.makeText(this, "Error with saving location",
                     Toast.LENGTH_SHORT).show();
         } else {
+            //since the insert method return the Uri of the row created, we can extract the ID of
+            //the new row using the parseID method with our newUri as an input. This method gets the
+            //last segment of the Uri, which is our new ID in this case and we store it in an object
+            // And add it to the confirmation method.
+            String id = String.valueOf(ContentUris.parseId(newUri));
             // Otherwise, the insertion was successful and we can display a toast.
-            Toast.makeText(this, "Location saved",
+            Toast.makeText(this, "Location saved with ID: " + id,
                     Toast.LENGTH_SHORT).show();
         }
-        displayDatabaseInfo();
     }//insertLocation
 
     //This deletes the last input
@@ -341,7 +312,6 @@ public class LocationEntry extends AppCompatActivity implements GoogleApiClient.
         } else {
             Toast.makeText(this,
                     "Last entry has been deleted ", Toast.LENGTH_SHORT).show();
-            displayDatabaseInfo();
         }
         cursor.close();
     }//undo
@@ -371,7 +341,6 @@ public class LocationEntry extends AppCompatActivity implements GoogleApiClient.
         super.onStart();
         //Connect client
         mGoogleApiClient.connect();
-        displayDatabaseInfo();
     } //onStart
 
     @Override
@@ -395,7 +364,6 @@ public class LocationEntry extends AppCompatActivity implements GoogleApiClient.
         Log.d(TAG, "Resumed");
         //Re-connect the client on resume
         mGoogleApiClient.connect();
-        displayDatabaseInfo();
         super.onResume();
     } //onResume
 

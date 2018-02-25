@@ -80,7 +80,7 @@ public class LocationView extends AppCompatActivity implements LoaderManager.Loa
                 //set the Uri on the data field of the intent
                 intent.setData(currentPetUri);
 
-                //Launch the {@link LocationEdit} to display data for the current pet
+                //Launch the {@link LocationEdit} to display data for the current location
                 startActivity(intent);
             }
         });//onClickListener ListView
@@ -96,13 +96,21 @@ public class LocationView extends AppCompatActivity implements LoaderManager.Loa
                 LocationEntry.COLUMN_LOCATION_CONTAINER
         };
 
+        /**
+         * We can order the list using the sorOrder argument; null will use the default sort.
+         * Formatted as SQL ORDER BY clause (excluding the ORDER BY itself.
+         * for reference: ORDER BY <column_name> <ASC|DESC>
+         *     Here I want it to be ordered in descending order based on the ID (newest first)
+         */
+        String sortOrder = LocationEntry._ID + " DESC";
+
         //This loader will execute the ContentProvider's query method on background thread
         return new CursorLoader(this,   //parent activity context
                 LocationEntry.CONTENT_URI,           //provider content Uri to query
                 projection,                     //The columns to return for each row
                 null,                   //Selection criteria
                 null,               //Selection criteria
-                null                    //The sort order for returned rows
+                sortOrder                    //The sort order for returned rows
         );
     }//onCreateLoader
 

@@ -51,8 +51,8 @@ public class LocationCursorAdapter extends CursorAdapter {
         TextView summaryTextView = view.findViewById(R.id.location_summary);
 
         /**
-         *   Find the columns of pet attributes that we're interested in our Cursor is already set
-         *   at a specific row (managed by the listView depending on where we are so we don't need
+         *   Find the columns of location attributes that we're interested in our Cursor is already
+         *   set at a specific row (managed by the listView depending on where we are so we don't need
          *   to worry about row index). However, in order to get the data from a specific column
          *   (here getting the ID, time, and other checkbox info), first we need to find the index
          *   associated with that column name. This is exactly what cursor.getColumnIndex does.

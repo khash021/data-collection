@@ -3,16 +3,20 @@ package com.example.android.datacollection;
 import android.app.LoaderManager;
 import android.content.ContentValues;
 import android.content.CursorLoader;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -44,6 +48,23 @@ public class LocationEdit extends AppCompatActivity implements LoaderManager.Loa
     Button mMapsButton, mSaveButton, mDeleteButton;
     double mLat, mLon;
 
+    //This is for tracking unsaved changes
+    private boolean mDataChanged = false;
+
+    /**
+     * OnTouchListener that listens for any user touches on a View, implying that they are modifying
+     * the view, and we change the mDataChanged boolean to true.
+     * Then we will use this as the input of our setOnTouchListener on the views that we want to
+     * trigger this in the onCreate
+     */
+    private View.OnTouchListener mTouchListener = new View.OnTouchListener() {
+        @Override
+        public boolean onTouch(View view, MotionEvent motionEvent) {
+            mDataChanged = true;
+            return false;
+        }
+    };//OnTouchListener
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -63,6 +84,15 @@ public class LocationEdit extends AppCompatActivity implements LoaderManager.Loa
 
         // Initialize a loader to read the location data from the database
         getLoaderManager().initLoader(EXISTING_LOCATION_LOADER, null, this);
+
+        //Here we set the onTouchListener on the items we want to trigger the dialog confirming user
+        //wants to exit the activity
+        mCommentText.setOnTouchListener(mTouchListener);
+        mEstablishmentText.setOnTouchListener(mTouchListener);
+        mGarbageCheckBox.setOnTouchListener(mTouchListener);
+        mContainerCheckBox.setOnTouchListener(mTouchListener);
+        mPaperCheckBox.setOnTouchListener(mTouchListener);
+        mEstablishmentCheckBox.setOnTouchListener(mTouchListener);
 
         /**
          * If the location is inside a establishment, and the user turns the checkbox off in edit
@@ -339,4 +369,57 @@ public class LocationEdit extends AppCompatActivity implements LoaderManager.Loa
         //exit activity
         finish();
     }//onLoaderReset
+
+    /**
+     * For handling the discard changes dialog, we use a helper method to show the dialog if there
+     * were any unsaved changes.
+     * onBackPressed gets initiated if the user press the Phone's back button.
+     * onOptionsItemSelected gets initiated if the user uses the app's back button.
+     *
+     */
+
+    private void discardDialog(){
+        //This only gets executed if there are unsaved data.
+        //Make a dialog.
+        //Instantiate an AlertDialog.Builder with its constructor
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("Discard Changes?");
+        // Add the buttons
+        builder.setPositiveButton("Discard", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                finish();
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        //make the Dialog object
+        final AlertDialog dialog = builder.create();
+        dialog.show();
+    }//discardDialog
+
+    //This gets triggered when the phone's back button is pressed
+    @Override
+    public void onBackPressed() {
+        //We check to see if the location has changed
+        if (!mDataChanged) {
+            super.onBackPressed();
+            return;
+        }//if
+        discardDialog();
+    }//onBackPressed
+
+    //This gets triggered when the app back arrow is pressed
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (!mDataChanged) {
+            return super.onOptionsItemSelected(item);
+        }//if
+        discardDialog();
+        return true;
+    }//onOptionsItemSelected
 }//LocationEdit class

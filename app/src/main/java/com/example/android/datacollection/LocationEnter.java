@@ -8,6 +8,8 @@ import android.database.Cursor;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
@@ -43,6 +45,8 @@ public class LocationEnter extends AppCompatActivity implements GoogleApiClient.
 
     //Tag to be used for all our logs
     private final String TAG = "Data Entry";
+    //Coordinator Layout (used for snacks)
+    private CoordinatorLayout mCoordinatorLayout;
     //The TextView that displays the current location
     private GoogleApiClient mGoogleApiClient;
     //Date and time format and date instance
@@ -324,9 +328,12 @@ public class LocationEnter extends AppCompatActivity implements GoogleApiClient.
             //last segment of the Uri, which is our new ID in this case and we store it in an object
             // And add it to the confirmation method.
             String id = String.valueOf(ContentUris.parseId(newUri));
-            // Otherwise, the insertion was successful and we can display a toast.
-            Toast.makeText(this, "Location saved with ID: " + id,
-                    Toast.LENGTH_SHORT).show();
+            // Otherwise, the insertion was successful and we can display a snackbar
+            //pop-up message
+            mCoordinatorLayout = findViewById(R.id.coordinator_layout);
+            Snackbar.make(mCoordinatorLayout,"Location added with ID: " + id,
+                    Snackbar.LENGTH_SHORT)
+                    .show();
         }
     }//insertLocation
 

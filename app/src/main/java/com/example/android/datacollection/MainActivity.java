@@ -1,11 +1,13 @@
 package com.example.android.datacollection;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -69,19 +71,9 @@ public class MainActivity extends AppCompatActivity  {
         deleteAllButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //By passing in 1 as the whereClause, it will delete all rows and return the number
-                //of rows deleted.
-                String whereClause = "1";
-                int result = getContentResolver().delete(LocationEntry.CONTENT_URI,
-                        whereClause, null);
+                //We pass it to the helper method which will show a dialog and confirm the deletion
+                confirmDelete();
 
-                //We should be getting an integer with the number of deleted rows since we have
-                // passed in 1 as where clause
-                Toast.makeText(MainActivity.this,
-                        "All rows in database have been deleted" +
-                                "\nnumber of deleted rows: " + result,
-                        Toast.LENGTH_SHORT).show();
-                displayDatabaseInfo();
             }
         });//onClickListener - Delete All
 
@@ -96,6 +88,52 @@ public class MainActivity extends AppCompatActivity  {
             }
         });//onClickListener - show database
     } //OnCreate
+
+    /**
+     * Helper method to deal with the confirmation of the action delete all.
+     *
+     * It first creates a simple AlerDialog. Then it launches the Dialog warning the user
+     * that this action will not be reversible and ask wither to confirm or cancel
+     */
+    //TODO: Create another class for making all these dialogs so we can just refer to it once.
+    private void confirmDelete() {
+        /**
+         * We first make an object of AlertDialog.Builder class (builder). This is used to make the
+         * dialog. We set the title, and action of each button with this object.
+         * Then we will create an object of AlertDialog class (dialogConfirmation) which will
+         * actually show the dialog. We do this using create() method on the build object.
+         * Then we show the dialog by calling the show() method on the dialog object.
+         */
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("CAUTION").setMessage("This will delete the entire databse, " +
+                "and is irreversible.\nWould you like to continue?");
+
+        builder.setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int id) {
+                //By passing in 1 as the whereClause, it will delete all rows and return the number
+                //of rows deleted.
+                String whereClause = "1";
+                int result = getContentResolver().delete(LocationEntry.CONTENT_URI,
+                        whereClause, null);
+                //We should be getting an integer with the number of deleted rows since we have
+                // passed in 1 as where clause
+                Toast.makeText(MainActivity.this,
+                        "All rows in database have been deleted" +
+                                "\nnumber of deleted rows: " + result,
+                        Toast.LENGTH_SHORT).show();
+                displayDatabaseInfo();
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        final AlertDialog dialogConfirmation = builder.create();
+        dialogConfirmation.show();
+    }//confirmDelete
 
     @Override
     protected void onStart() {

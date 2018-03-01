@@ -89,6 +89,16 @@ public class MainActivity extends AppCompatActivity  {
                 startActivity(intent);
             }
         });//onClickListener - show database
+
+        //Google Maps button
+        Button viewDataMaps = findViewById(R.id.google_maps_button);
+        viewDataMaps.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent =new Intent(MainActivity.this, MapsView.class);
+                startActivity(intent);
+            }
+        });
     } //OnCreate
 
     /**

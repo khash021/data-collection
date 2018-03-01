@@ -54,8 +54,15 @@ public class LocationEdit extends AppCompatActivity implements LoaderManager.Loa
     /**
      * OnTouchListener that listens for any user touches on a View, implying that they are modifying
      * the view, and we change the mDataChanged boolean to true.
+     *
      * Then we will use this as the input of our setOnTouchListener on the views that we want to
      * trigger this in the onCreate
+     *
+     * Having a OnTouchListener object is very useful if we want to do something for all of the
+     * touch events such as setting mDataChanged to true regardless of what that view that triggered
+     * is. This could have also been accomplished by adding the line 'mDataChanged = true;' to all
+     * of our individual views, but is bad coding. Everytime we will copy and paste something, we
+     * should think about generalizing that using helper methods, etc.
      */
     private View.OnTouchListener mTouchListener = new View.OnTouchListener() {
         @Override

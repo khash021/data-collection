@@ -72,7 +72,9 @@ public class MainActivity extends AppCompatActivity  {
             @Override
             public void onClick(View v) {
                 //We pass it to the helper method which will show a dialog and confirm the deletion
-                confirmDelete();
+                //Disabled for now!!!
+//                confirmDelete();
+                Toast.makeText(MainActivity.this, "Disabled", Toast.LENGTH_SHORT).show();
 
             }
         });//onClickListener - Delete All

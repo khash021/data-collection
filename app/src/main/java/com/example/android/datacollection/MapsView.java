@@ -25,7 +25,7 @@ public class MapsView extends AppCompatActivity implements OnMapReadyCallback {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         Log.v(TAG, "onCreated called");
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.maps_fragment);
+        setContentView(R.layout.maps_view_activity);
 
         /**
          * The fragment is what actually contains the Google Maps and displays it.
@@ -51,4 +51,4 @@ public class MapsView extends AppCompatActivity implements OnMapReadyCallback {
         Log.v(TAG, "onMapReady callback triggered");
 
     }//onMapReady
-}//MapsView calss
+}//MapsView class

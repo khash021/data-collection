@@ -6,12 +6,16 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.Toast;
 
 import com.example.android.datacollection.Database.LocationContract.LocationEntry;
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
@@ -49,6 +53,29 @@ public class MapsView extends AppCompatActivity implements OnMapReadyCallback,
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
+        //initialize the activity with Garbage check box set to see some results
+        mGarbageCheckbox = findViewById(R.id.garbage_checkbox);
+        mGarbageCheckbox.setChecked(true);
+        /**
+         * Right now this clears the map and then add the point again since there is no other data
+         * TODO: actually get the infor from the data of the markers and act accordingly
+         */
+        mGarbageCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                //isChecked is the new state
+                //Checks to see if the map is ready
+                if (!checkReady()) {
+                    return;
+                }
+                if (!isChecked) {
+                    mMap.clear();
+                } else if (isChecked) {
+                    populateMap();
+                }
+            }
+        });//setOnCheckedChangeListener
     }//onCreate
 
     /**
@@ -69,8 +96,23 @@ public class MapsView extends AppCompatActivity implements OnMapReadyCallback,
 
         //TODO: set limits for the map and also open the map centered at downtown with zoom 13-15
 
+        //restricting users panning to Vancouver dt area. First input is the SW corner, and the
+        // second NE corner of the restricted pan area
+        LatLngBounds limit = new LatLngBounds(new LatLng( 49.268642, -123.148639),
+                new LatLng( 49.300045, -123.095893));
+        //Add limit to our map
+        mMap.setLatLngBoundsForCameraTarget(limit);
+
+        //Since the pan is limited, we should also limit min zoom, other wise they can zoom all the
+        //way out and the bounds would be useless
+        mMap.setMinZoomPreference(13.0f);
+
         //Use the helper method to add markers to the map retrieved from the database
-        populateMarker();
+        populateMap();
+
+        //Set the initial camera to the center of downtown (where it says Vancouver)
+        LatLng initialLocation =  new LatLng( 49.282733f, -123.120732f);
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(initialLocation, 13.0f));
 
         //Log the number of markers
         Log.v(TAG, "Total number of markers added to the map: " + mMarkerArrayList.size());
@@ -82,7 +124,7 @@ public class MapsView extends AppCompatActivity implements OnMapReadyCallback,
      * @return ArrayList<Marker>
      */
     //TODO: we need add the feature to automatically update the ArrayList as the database updates
-    private void populateMarker(){
+    private void populateMap(){
         /**
          * First we need to query the database and get all the data (cursor object).
          */
@@ -157,7 +199,16 @@ public class MapsView extends AppCompatActivity implements OnMapReadyCallback,
 
             mMarkerArrayList.add(mMaker);
         }//while
-    }//populateMarker
+    }//populateMap
+
+    //Helper method for checking if the map is ready, used by other methods before performing thir tasks
+    private boolean checkReady() {
+        if (mMap == null) {
+            Toast.makeText(this, "Map not ready", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        return true;
+    }//checkReady
 
     @Override
     public boolean onMarkerClick(Marker marker) {

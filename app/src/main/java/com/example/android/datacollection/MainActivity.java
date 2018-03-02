@@ -98,7 +98,8 @@ public class MainActivity extends AppCompatActivity  {
                 Intent intent =new Intent(MainActivity.this, MapsView.class);
                 startActivity(intent);
             }
-        });
+        });// Goole Maps button
+
     } //OnCreate
 
     /**

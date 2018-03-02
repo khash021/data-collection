@@ -36,7 +36,11 @@ public class MapsView extends AppCompatActivity implements OnMapReadyCallback,
 
     CheckBox mGarbageCheckbox, mContainerCheckbox, mPaperCheckbox;
 
+    //ArrayList of all the markers
     ArrayList<Marker> mMarkerArrayList = new ArrayList<>();
+
+    //Curso object containing the data
+    private Cursor mCursor;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -54,25 +58,19 @@ public class MapsView extends AppCompatActivity implements OnMapReadyCallback,
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
-        //initialize the activity with Garbage check box set to see some results
+        //initialize the activity with Garbage check box set, showing all the markers
         mGarbageCheckbox = findViewById(R.id.garbage_checkbox);
         mGarbageCheckbox.setChecked(true);
-        /**
-         * Right now this clears the map and then add the point again since there is no other data
-         * TODO: actually get the infor from the data of the markers and act accordingly
-         */
         mGarbageCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 //isChecked is the new state
-                //Checks to see if the map is ready
-                if (!checkReady()) {
-                    return;
-                }
-                if (!isChecked) {
-                    mMap.clear();
-                } else if (isChecked) {
-                    populateMap();
+                boolean result = garbageFilter(isChecked);
+                if (!result) {
+                    Toast.makeText(getApplicationContext(), "Map is not ready",
+                            Toast.LENGTH_SHORT).show();
+                    //since nothing was done reverse the check box to its original format
+                    mGarbageCheckbox.setChecked(!isChecked);
                 }
             }
         });//setOnCheckedChangeListener
@@ -94,8 +92,6 @@ public class MapsView extends AppCompatActivity implements OnMapReadyCallback,
         Log.v(TAG, "onMapReady callback triggered");
         mMap = map;
 
-        //TODO: set limits for the map and also open the map centered at downtown with zoom 13-15
-
         //restricting users panning to Vancouver dt area. First input is the SW corner, and the
         // second NE corner of the restricted pan area
         LatLngBounds limit = new LatLngBounds(new LatLng( 49.268642, -123.148639),
@@ -114,6 +110,9 @@ public class MapsView extends AppCompatActivity implements OnMapReadyCallback,
         LatLng initialLocation =  new LatLng( 49.282733f, -123.120732f);
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(initialLocation, 13.0f));
 
+        //Set onClickListener
+        mMap.setOnMarkerClickListener(this);
+
         //Log the number of markers
         Log.v(TAG, "Total number of markers added to the map: " + mMarkerArrayList.size());
     }//onMapReady
@@ -126,7 +125,7 @@ public class MapsView extends AppCompatActivity implements OnMapReadyCallback,
     //TODO: we need add the feature to automatically update the ArrayList as the database updates
     private void populateMap(){
         /**
-         * First we need to query the database and get all the data (cursor object).
+         * First we need to query the database and get all the data (mCursor object).
          */
         //Define a projection for the columns we want
         //For now, I am not getting the establishment data since I have not collected any
@@ -140,8 +139,8 @@ public class MapsView extends AppCompatActivity implements OnMapReadyCallback,
                 LocationEntry.COLUMN_LOCATION_COMMENT
         };
 
-        //Query the database using our projection. The data is then passed back is a cursor Object
-        Cursor cursor = getContentResolver().query(
+        //Query the database using our projection. The data is then passed back is a mCursor Object
+        Cursor mCursor = getContentResolver().query(
                 LocationEntry.CONTENT_URI,     //The content Uri
                 projection,               //The columns to return for each row
                 null,            //Selection criteria
@@ -150,14 +149,13 @@ public class MapsView extends AppCompatActivity implements OnMapReadyCallback,
         );
 
         //get the column ID for each column
-        int idColumnIndex = cursor.getColumnIndex(LocationEntry._ID);
-        int latColumnIndex = cursor.getColumnIndex(LocationEntry.COLUMN_LOCATION_LATITUDE);
-        int lngColumnIndex = cursor.getColumnIndex(LocationEntry.COLUMN_LOCATION_LONGITUDE);
-        int garbageColumnIndex = cursor.getColumnIndex(LocationEntry.COLUMN_LOCATION_GARBAGE);
-        int containerColumnIndex = cursor.getColumnIndex(LocationEntry.COLUMN_LOCATION_CONTAINER);
-        int paperColumnIndex = cursor.getColumnIndex(LocationEntry.COLUMN_LOCATION_PAPER);
-        int commentColumnIndex = cursor.getColumnIndex(LocationEntry.COLUMN_LOCATION_COMMENT);
-
+        int idColumnIndex = mCursor.getColumnIndex(LocationEntry._ID);
+        int latColumnIndex = mCursor.getColumnIndex(LocationEntry.COLUMN_LOCATION_LATITUDE);
+        int lngColumnIndex = mCursor.getColumnIndex(LocationEntry.COLUMN_LOCATION_LONGITUDE);
+        int garbageColumnIndex = mCursor.getColumnIndex(LocationEntry.COLUMN_LOCATION_GARBAGE);
+        int containerColumnIndex = mCursor.getColumnIndex(LocationEntry.COLUMN_LOCATION_CONTAINER);
+        int paperColumnIndex = mCursor.getColumnIndex(LocationEntry.COLUMN_LOCATION_PAPER);
+        int commentColumnIndex = mCursor.getColumnIndex(LocationEntry.COLUMN_LOCATION_COMMENT);
 
         /**
          * This part uses the loop to go through each row, extract all the data, and
@@ -165,15 +163,15 @@ public class MapsView extends AppCompatActivity implements OnMapReadyCallback,
         //TODO: set the marker colors, based on what is available at that spot
         //create a marker object
         Marker mMaker;
-        while (cursor.moveToNext()) {
-            //get the data from cursor
-            int id = cursor.getInt(idColumnIndex);
-            LatLng latLng = new LatLng(cursor.getDouble(latColumnIndex),
-                    cursor.getDouble(lngColumnIndex));
-            int garbage = cursor.getInt(garbageColumnIndex);
-            int container = cursor.getInt(containerColumnIndex);
-            int paper = cursor.getInt(paperColumnIndex);
-            String comment = cursor.getString(commentColumnIndex);
+        while (mCursor.moveToNext()) {
+            //get the data from mCursor
+            int id = mCursor.getInt(idColumnIndex);
+            LatLng latLng = new LatLng(mCursor.getDouble(latColumnIndex),
+                    mCursor.getDouble(lngColumnIndex));
+            int garbage = mCursor.getInt(garbageColumnIndex);
+            int container = mCursor.getInt(containerColumnIndex);
+            int paper = mCursor.getInt(paperColumnIndex);
+            String comment = mCursor.getString(commentColumnIndex);
             int[] booleanValues = {id, garbage, container, paper};
 
             //Make a new MarkerOptions object to add the data
@@ -201,17 +199,64 @@ public class MapsView extends AppCompatActivity implements OnMapReadyCallback,
         }//while
     }//populateMap
 
-    //Helper method for checking if the map is ready, used by other methods before performing thir tasks
-    private boolean checkReady() {
+    /**
+     * Helper method for checking if the map is ready, used by other methods before performing
+     * their tasks
+     * @return tru if the map is ready, false otherwise
+     */
+    private boolean checkMapReady() {
         if (mMap == null) {
             Toast.makeText(this, "Map not ready", Toast.LENGTH_SHORT).show();
             return false;
         }
         return true;
-    }//checkReady
+    }//checkMapReady
+
+    /**
+     *   Helper method for garbage checkbox
+     *   return true if the map was ready and the operation was successful
+     *   false if the map was not ready and nothing happened so that the chekbox can be turned into
+     *   original state.
+     */
+    private boolean garbageFilter(Boolean b){
+        //check to see if map is ready
+        if (!checkMapReady()) {
+            return false;
+        }//if Map Not ready
+        if (b) {
+            //this is the case that the check box is turned on. Make markers with garbgae tag visible
+            for (Marker marker: mMarkerArrayList) {
+                Object tagObject = marker.getTag();
+                int[] tagArray = (int[]) tagObject;
+                int garbage = tagArray[1];
+                if (garbage == 1) {
+                    marker.setVisible(true);
+                }
+            }//for
+        } else {
+            //This is for when they turned it off, make all the ones with garbage tag invisible
+            for (Marker marker: mMarkerArrayList) {
+                Object tagObject = marker.getTag();
+                int[] tagArray = (int[]) tagObject;
+                int garbage = tagArray[1];
+                if (garbage == 1) {
+                    marker.setVisible(false);
+                }
+            }//for
+        }
+        return true;
+    }//garbageFilter
 
     @Override
     public boolean onMarkerClick(Marker marker) {
         return false;
     }//onMarkerClick
+
+    @Override
+    protected void onStop() {
+        mCursor.close();
+        super.onStop();
+    }
 }//MapsView class
+
+

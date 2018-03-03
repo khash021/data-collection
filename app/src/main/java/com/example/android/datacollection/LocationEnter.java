@@ -463,7 +463,7 @@ public class LocationEnter extends AppCompatActivity implements GoogleApiClient.
             // Check Permissions Now
             ActivityCompat.requestPermissions(this,
                     new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
-                    MainActivity.REQUEST_LOCATION);
+                    MainActivity.REQUEST_CODE);
         } else {
             //Start requesting location updates
             LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);

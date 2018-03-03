@@ -1,9 +1,13 @@
 package com.example.android.datacollection;
 
+import android.Manifest;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -23,7 +27,7 @@ public class MainActivity extends AppCompatActivity  {
     //Tag for logging
     private final String TAG = "Main Activity";
     //Request location constant for location permission
-    static final int REQUEST_LOCATION = 0;
+    static final int REQUEST_CODE = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,12 +51,21 @@ public class MainActivity extends AppCompatActivity  {
             // No explanation needed; request the permission
             ActivityCompat.requestPermissions(this,
                     new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
-                    REQUEST_LOCATION);
+                    REQUEST_CODE);
 
-            // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
+            // REQUEST_CODE is an
             // app-defined int constant. The callback method gets the
             // result of the request.
         } //permission
+
+        //This checks to see if there is permission to access files
+        if (ContextCompat.checkSelfPermission(this,
+                android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
+            != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this,
+                    new String[] {Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                    REQUEST_CODE);
+        }
 
         //Enter data button (this takes us to the LocationEnter activity
         Button enterDataButton = findViewById(R.id.enter_data);
@@ -99,6 +112,22 @@ public class MainActivity extends AppCompatActivity  {
                 startActivity(intent);
             }
         });// Goole Maps button
+
+        /**
+         * This section figures out what is the source of data (mobile, Wifi, etc)
+         * This is going to be used later together with Day/Night to set the night mode (only if
+         * outside during night, so if connected to Wifi means they are probably inside and no need
+         * for Night mode)
+         *
+         * NOTE: you need to add user-permission (ACCESS_NETWORK_STATE) to manifest
+         * Right now, only displays what is the source of data in a textview.
+         */
+        TextView networkTextView = findViewById(R.id.network_textview);
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo mActiveNetwork = cm.getActiveNetworkInfo();
+        //this returns a human-readable name
+        String activeNetworkString = mActiveNetwork.getTypeName();
+        networkTextView.append(activeNetworkString);
 
     } //OnCreate
 

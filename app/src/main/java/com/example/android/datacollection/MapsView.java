@@ -5,8 +5,11 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.android.datacollection.Database.LocationContract.LocationEntry;
@@ -31,6 +34,80 @@ public class MapsView extends AppCompatActivity implements OnMapReadyCallback,
         GoogleMap.OnMarkerClickListener {
 
     private String TAG =this.getClass().getSimpleName();
+
+    /**
+     * This class is for customizing Info Windows
+     *
+     */
+    class CustomInfoWindowAdapter implements GoogleMap.InfoWindowAdapter {
+
+        // Viewgroup containing 3 ImageViews with ids "garbage, container, and paper"
+        private final View mContent;
+
+        CustomInfoWindowAdapter() {
+            mContent = getLayoutInflater().inflate(R.layout.custom_info_content, null);
+        }//CustomInfoWindowAdapter
+
+        /**
+         * These two methods are part of the InfoWindowAdapter interface that we have to implement
+         * It first calls getInfoWindow, and if this turns nill, then it goes to getInfoContent;
+         * if that one also returns null, then the default behavior will happen; which is the default
+         * Info Window.
+         *
+         * @param marker is the marker that was clicked on
+         * @return view
+         */
+        @Override
+        public View getInfoWindow(Marker marker) {
+            return null;
+        }//getInfoWindow
+
+        @Override
+        public View getInfoContents(Marker marker) {
+            render(marker, mContent);
+            return mContent;
+        }//getInfoContents
+
+        /**
+         * This is the helper method for making the custom Info Window.
+         *
+         * In the layout file (custom_info_content), all images are set, but their visibility is
+         * set to GONE. Here we turn them back on if the marker has those attributes
+         *
+         * @param marker is the marker that was clicked on, passed using the callbacks above
+         *
+         */
+        private void render(Marker marker, View view) {
+            //get the data from marker
+            int garbageImage, containerImage, paperImage;
+            int garbage, container, paper;
+            Object tag = marker.getTag();
+            int[] markerTag = (int[]) tag;
+            garbage = markerTag[1];
+            container = markerTag[2];
+            paper = markerTag[3];
+
+            //Make the images visible based on the properties of this location
+            if (garbage == 1) {
+                ((ImageView) view.findViewById(R.id.garbage_imageView)).
+                        setVisibility(View.VISIBLE);
+            }
+            if (container == 1)
+                ((ImageView) view.findViewById(R.id.container_imageView)).
+                        setVisibility(View.VISIBLE);
+            if (paper == 1) {
+                ((ImageView) view.findViewById(R.id.paper_imageView)).
+                        setVisibility(View.VISIBLE);
+            }
+
+            //Add comment
+            String comment = marker.getSnippet().trim();
+            if (comment.length() > 1)
+                ((TextView) view.findViewById(R.id.comment_textView)).setText(comment);
+        }//render
+    }//CustomInfoWindowAdapter
+
+
     //Google Maps object
     GoogleMap mMap;
 
@@ -99,6 +176,9 @@ public class MapsView extends AppCompatActivity implements OnMapReadyCallback,
         //Add limit to our map
         mMap.setLatLngBoundsForCameraTarget(limit);
 
+        //Enable my location layer
+        mMap.setMyLocationEnabled(true);
+
         //Since the pan is limited, we should also limit min zoom, other wise they can zoom all the
         //way out and the bounds would be useless
         mMap.setMinZoomPreference(13.0f);
@@ -109,6 +189,9 @@ public class MapsView extends AppCompatActivity implements OnMapReadyCallback,
         //Set the initial camera to the center of downtown (where it says Vancouver)
         LatLng initialLocation =  new LatLng( 49.282733f, -123.120732f);
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(initialLocation, 13.0f));
+
+        // Setting the our custom info window, passing out helper method
+        mMap.setInfoWindowAdapter(new CustomInfoWindowAdapter());
 
         //Set onClickListener
         mMap.setOnMarkerClickListener(this);
@@ -252,11 +335,7 @@ public class MapsView extends AppCompatActivity implements OnMapReadyCallback,
         return false;
     }//onMarkerClick
 
-    @Override
-    protected void onStop() {
-        mCursor.close();
-        super.onStop();
-    }
+
 }//MapsView class
 
 

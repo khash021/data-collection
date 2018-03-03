@@ -113,6 +113,16 @@ public class MainActivity extends AppCompatActivity  {
             }
         });// Goole Maps button
 
+        //Heatmaps button
+        Button heatmapsButton = findViewById(R.id.heatmap_button);
+        heatmapsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(MainActivity.this, HeatmapActivity.class);
+                startActivity(i);
+            }
+        });
+
         /**
          * This section figures out what is the source of data (mobile, Wifi, etc)
          * This is going to be used later together with Day/Night to set the night mode (only if

@@ -116,7 +116,7 @@ public class MapsView extends AppCompatActivity implements OnMapReadyCallback,
     //ArrayList of all the markers
     ArrayList<Marker> mMarkerArrayList = new ArrayList<>();
 
-    //Curso object containing the data
+    //Cursor object containing the data
     private Cursor mCursor;
 
     @Override

@@ -62,6 +62,11 @@
             android:label="Maps View"
             android:parentActivityName=".MainActivity"/>
 
+        <activity android:name=".HeatmapActivity"
+            android:label="Heat Maps"
+            android:parentActivityName=".MainActivity"/>
+
+
         <provider
             android:name=".Database.LocationProvider"
             android:authorities="com.example.android.datacollection"

@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
 
 import com.example.android.datacollection.Database.LocationContract.LocationEntry;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -42,6 +43,7 @@ public class HeatmapActivity extends AppCompatActivity implements OnMapReadyCall
     //Cursor object containing the data
     private Cursor mCursor;
 
+    //Used for heatmaps
     private HeatmapTileProvider mProvider;
     private TileOverlay mOverlay;
 
@@ -50,6 +52,9 @@ public class HeatmapActivity extends AppCompatActivity implements OnMapReadyCall
         Log.v(TAG, "onCreated called");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.maps_view_activity);
+
+        View checkboxView = findViewById(R.id.checkbox_bar);
+        checkboxView.setVisibility(View.GONE);
 
         /**
          * The fragment is what actually contains the Google Maps and displays it.

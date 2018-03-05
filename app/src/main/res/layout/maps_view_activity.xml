@@ -4,10 +4,12 @@
     android:orientation="vertical">
 
     <LinearLayout
+        android:id="@+id/checkbox_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="0"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:adjustViewBounds="true">
 
         <CheckBox
             android:id="@+id/garbage_checkbox"

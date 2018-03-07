@@ -133,14 +133,22 @@ public class LocationMapsViewActivity extends AppCompatActivity implements OnMap
     //Google Api Client
     protected GoogleApiClient mGoogleApiClient;
 
-    //location object
+    //location object and corresponding LatLng object
     Location mMyLocation;
+    LatLng mMyLatLng;
+
+    //Vancouver dt mLocationLimit
+    LatLngBounds mLocationLimit = new LatLngBounds(new LatLng( 49.268642, -123.148639),
+            new LatLng( 49.300045, -123.095893));
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         Log.v(TAG, "onCreated called");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.maps_view_activity);
+
+        //build Google Api Client
+        buildGoogleApiClient();
 
         /**
          * The fragment is what actually contains the Google Maps and displays it.
@@ -203,9 +211,6 @@ public class LocationMapsViewActivity extends AppCompatActivity implements OnMap
             }
         });//Paper Checkbox listener
 
-        //build Google Api Client
-        buildGoogleApiClient();
-
         //Get the ArrayList
         myLocationArrayList = MainActivity.getGlobalLocationArrayList();
     }//onCreate
@@ -228,15 +233,12 @@ public class LocationMapsViewActivity extends AppCompatActivity implements OnMap
 
         //restricting users panning to Vancouver dt area. First input is the SW corner, and the
         // second NE corner of the restricted pan area
-        LatLngBounds limit = new LatLngBounds(new LatLng( 49.268642, -123.148639),
-                new LatLng( 49.300045, -123.095893));
-        //Add limit to our map
-        mMap.setLatLngBoundsForCameraTarget(limit);
+        mMap.setLatLngBoundsForCameraTarget(mLocationLimit);
 
         //Enable my location layer
         mMap.setMyLocationEnabled(true);
 
-        //Since the pan is limited, we should also limit min zoom, other wise they can zoom all the
+        //Since the pan is limited, we should also mLocationLimit min zoom, other wise they can zoom all the
         //way out and the bounds would be useless
         mMap.setMinZoomPreference(13.0f);
 
@@ -245,31 +247,37 @@ public class LocationMapsViewActivity extends AppCompatActivity implements OnMap
 
         /**
          * If mMyLocation is not null (we have our lcoation), it checks to see if it falls within
-         * our limit bounds (i.e. downtown Vancouver). If it is, it initializes map at that
+         * our mLocationLimit bounds (i.e. downtown Vancouver). If it is, it initializes map at that
          * location, otherwise use the center of downtown
          */
         //Our default start location
         LatLng centerDowntownLocation =  new LatLng( 49.282733f, -123.120732f);
-        if (mMyLocation != null) {
-            //Build a LatLng object from MyLocation
-            LatLng mMyLatLng = new LatLng(mMyLocation.getLatitude(), mMyLocation.getLongitude());
-            //Checks to see if we are within bounds
-            if (limit.contains(mMyLatLng)) {
-                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mMyLatLng, 15.0f));
-            } else {
-                //This is for when the mMyLocation is not within bounds
-                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(centerDowntownLocation, 15.0f));
-            }//if
-        } else {
-            //this gets executed if mMyLocation is null
-            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(centerDowntownLocation, 15.0f));
-        }
+
+        //Initialize the map in center of downtown
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(centerDowntownLocation, 15.0f));
 
         // Setting the our custom info window, passing out helper method
         mMap.setInfoWindowAdapter(new CustomInfoWindowAdapter());
 
-        //Set onClickListener
+        //Set onClickListeners
         mMap.setOnMarkerClickListener(this);
+        mMap.setOnMyLocationButtonClickListener(new GoogleMap.OnMyLocationButtonClickListener() {
+            @Override
+            public boolean onMyLocationButtonClick() {
+                //check to see if the user's location is within bounds
+                if (mLocationLimit.contains(mMyLatLng)) {
+                    //do nothing default behavior will move the camera to user's lcoation
+                    return false;
+                } else {
+                    //Show a toast and return true, meaning the default zooming of camera is not
+                    //executed since the user is outside the limit
+                    Toast.makeText(getApplicationContext(),
+                            "You are currently outside of supported area", Toast.LENGTH_SHORT)
+                            .show();
+                    return true;
+                }
+            }
+        });//OnMyLocationButtonClickListener
 
         //Log the number of markers
         Log.v(TAG, "Total number of markers added to the map: " + mMarkerArrayList.size());
@@ -435,10 +443,11 @@ public class LocationMapsViewActivity extends AppCompatActivity implements OnMap
 
     /**
      * Helper method for initializing the Google Api Client.
-     * This does not request location updates, and only gets out current location once to be used
+     * This does not request location updates, and only gets our current location once to be used
      * for initializing the map
      */
     protected synchronized void buildGoogleApiClient() {
+        Log.v(TAG, "buildGoogleApiClient called");
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addOnConnectionFailedListener(this)
                 .addConnectionCallbacks(this)
@@ -465,12 +474,30 @@ public class LocationMapsViewActivity extends AppCompatActivity implements OnMap
         return false;
     }//onMarkerClick
 
+    /**
+     * This gets called when the Google Api Client is connected and the location is then acquired.
+     * Since this gets connected slightly after the onMapReady gets called; we need to check the
+     * user's location here, and if they are within the bounds, update the camera here; if not just
+     * show a Toast message
+     */
     @Override
     public void onConnected(@Nullable Bundle bundle) {
+        Log.v(TAG, "Google Api Client onConnected");
         //Check to see if there is location available and assign it to the mMyLocation object
         Location mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
         if (mLastLocation != null) {
             mMyLocation = mLastLocation;
+            //Make a LatLng object from myLocation data
+            mMyLatLng = new LatLng(mMyLocation.getLatitude(), mMyLocation.getLongitude());
+            //Check to see if the user's location is within bounds
+            if (mLocationLimit.contains(mMyLatLng)) {
+                //Move the camera to user's location
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mMyLatLng, 15.0f));
+            } else {
+                //If the user is outside the bounds, show a Toast message
+                Toast.makeText(this, "You are currently outside of supported area",
+                        Toast.LENGTH_SHORT).show();
+            }//if
         }//if
     }//onConnected
 

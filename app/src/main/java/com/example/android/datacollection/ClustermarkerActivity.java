@@ -101,10 +101,10 @@ public class ClustermarkerActivity extends AppCompatActivity implements OnMapRea
         // second NE corner of the restricted pan area
         LatLngBounds limit = new LatLngBounds(new LatLng( 49.268642, -123.148639),
                 new LatLng( 49.300045, -123.095893));
-        //Add limit to our map
+        //Add mLocationLimit to our map
         mMap.setLatLngBoundsForCameraTarget(limit);
 
-        //Since the pan is limited, we should also limit min zoom, other wise they can zoom all the
+        //Since the pan is limited, we should also mLocationLimit min zoom, other wise they can zoom all the
         //way out and the bounds would be useless
         mMap.setMinZoomPreference(13.0f);
 

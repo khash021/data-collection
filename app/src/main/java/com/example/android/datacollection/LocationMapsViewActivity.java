@@ -1,7 +1,8 @@
 package com.example.android.datacollection;
 
-import android.database.Cursor;
+import android.location.Location;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -12,8 +13,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.android.datacollection.Database.LocationContract.LocationEntry;
 import com.example.android.datacollection.model.MyLocation;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -32,7 +35,9 @@ import java.util.ArrayList;
  */
 
 public class LocationMapsViewActivity extends AppCompatActivity implements OnMapReadyCallback,
-        GoogleMap.OnMarkerClickListener {
+        GoogleMap.OnMarkerClickListener,
+        GoogleApiClient.ConnectionCallbacks,
+        GoogleApiClient.OnConnectionFailedListener {
 
     private String TAG =this.getClass().getSimpleName();
 
@@ -120,6 +125,12 @@ public class LocationMapsViewActivity extends AppCompatActivity implements OnMap
     //ArrayList to be used for locations
     private ArrayList<MyLocation> myLocationArrayList = new ArrayList<>();
 
+    //Google Api Client
+    protected GoogleApiClient mGoogleApiClient;
+
+    //location object
+    Location mMyLocation;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         Log.v(TAG, "onCreated called");
@@ -152,6 +163,9 @@ public class LocationMapsViewActivity extends AppCompatActivity implements OnMap
                 }
             }
         });//setOnCheckedChangeListener
+
+        //build Google Api Client
+        buildGoogleApiClient();
 
         //Get the ArrayList
         myLocationArrayList = MainActivity.getGlobalLocationArrayList();
@@ -190,9 +204,27 @@ public class LocationMapsViewActivity extends AppCompatActivity implements OnMap
         //Use the helper method to add markers to the map retrieved from the database
         populateMap();
 
-        //Set the initial camera to the center of downtown (where it says Vancouver)
-        LatLng initialLocation =  new LatLng( 49.282733f, -123.120732f);
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(initialLocation, 13.0f));
+        /**
+         * If mMyLocation is not null (we have our lcoation), it checks to see if it falls within
+         * our limit bounds (i.e. downtown Vancouver). If it is, it initializes map at that
+         * location, otherwise use the center of downtown
+         */
+        //Our default start location
+        LatLng centerDowntownLocation =  new LatLng( 49.282733f, -123.120732f);
+        if (mMyLocation != null) {
+            //Build a LatLng object from MyLocation
+            LatLng mMyLatLng = new LatLng(mMyLocation.getLatitude(), mMyLocation.getLongitude());
+            //Checks to see if we are within bounds
+            if (limit.contains(mMyLatLng)) {
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mMyLatLng, 15.0f));
+            } else {
+                //This is for when the mMyLocation is not within bounds
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(centerDowntownLocation, 15.0f));
+            }//if
+        } else {
+            //this gets executed if mMyLocation is null
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(centerDowntownLocation, 15.0f));
+        }
 
         // Setting the our custom info window, passing out helper method
         mMap.setInfoWindowAdapter(new CustomInfoWindowAdapter());
@@ -290,11 +322,57 @@ public class LocationMapsViewActivity extends AppCompatActivity implements OnMap
         return true;
     }//garbageFilter
 
+    /**
+     * Helper method for initializing the Google Api Client.
+     * This does not request location updates, and only gets out current location once to be used
+     * for initializing the map
+     */
+    protected synchronized void buildGoogleApiClient() {
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .addOnConnectionFailedListener(this)
+                .addConnectionCallbacks(this)
+                .addApi(LocationServices.API)
+                .build();
+    }//buildGoogleApiClient
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        mGoogleApiClient.connect();
+    }//onStart
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (mGoogleApiClient.isConnected()) {
+            mGoogleApiClient.disconnect();
+        }
+    }//onStop
+
     @Override
     public boolean onMarkerClick(Marker marker) {
         return false;
     }//onMarkerClick
 
+    @Override
+    public void onConnected(@Nullable Bundle bundle) {
+        //Check to see if there is location available and assign it to the mMyLocation object
+        Location mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+        if (mLastLocation != null) {
+            mMyLocation = mLastLocation;
+        }//if
+    }//onConnected
+
+    @Override
+    public void onConnectionSuspended(int i) {
+        Log.i(TAG, "Connection suspended, trying to reconnect");
+        mGoogleApiClient.connect();
+    }//onConnectionSuspended
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+        Log.i(TAG, "Connection failed: " + connectionResult.getErrorCode());
+    }//onConnectionFailed
 
 }//LocationMapsViewActivity class
 

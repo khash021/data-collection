@@ -21,6 +21,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.TileOverlay;
 
 import java.util.ArrayList;
 
@@ -246,6 +247,7 @@ public class MapsView extends AppCompatActivity implements OnMapReadyCallback,
         //TODO: set the marker colors, based on what is available at that spot
         //create a marker object
         Marker mMaker;
+        int j=0;
         while (mCursor.moveToNext()) {
             //get the data from mCursor
             int id = mCursor.getInt(idColumnIndex);
@@ -279,7 +281,9 @@ public class MapsView extends AppCompatActivity implements OnMapReadyCallback,
             mMaker.setTitle(title);
 
             mMarkerArrayList.add(mMaker);
+            j++;
         }//while
+        Toast.makeText(this, Integer.toString(j), Toast.LENGTH_SHORT).show();
     }//populateMap
 
     /**

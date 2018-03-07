@@ -113,15 +113,16 @@ public class MainActivity extends AppCompatActivity  {
             }
         });// Goole Maps button
 
-        //Heatmaps button
-        Button heatmapsButton = findViewById(R.id.heatmap_button);
-        heatmapsButton.setOnClickListener(new View.OnClickListener() {
+
+        //Cluster button
+        Button clustermarkerButton = findViewById(R.id.cluster_button);
+        clustermarkerButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i = new Intent(MainActivity.this, HeatmapActivity.class);
+                Intent i = new Intent(MainActivity.this, ClustermarkerActivity.class);
                 startActivity(i);
             }
-        });
+        });//Cluster
 
         /**
          * This section figures out what is the source of data (mobile, Wifi, etc)

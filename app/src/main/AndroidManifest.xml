@@ -62,8 +62,9 @@
             android:label="Maps View"
             android:parentActivityName=".MainActivity"/>
 
-        <activity android:name=".HeatmapActivity"
-            android:label="Heat Maps"
+
+        <activity android:name=".ClustermarkerActivity"
+            android:label="Choose the style"
             android:parentActivityName=".MainActivity"/>
 
 

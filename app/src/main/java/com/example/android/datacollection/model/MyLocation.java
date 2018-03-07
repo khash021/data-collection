@@ -18,7 +18,7 @@ public class MyLocation {
     //Variables
     public LatLng latLng;
     public int _id;
-    public String coment, establishmentComment, timeDate;
+    public String comment, establishmentComment, timeDate;
     public boolean garbage, container, paper, establishment;
 
     //Defauly constructor

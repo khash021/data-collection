@@ -13,6 +13,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.android.datacollection.Database.LocationContract.LocationEntry;
+import com.example.android.datacollection.model.MyLocation;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -21,7 +22,6 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.maps.model.TileOverlay;
 
 import java.util.ArrayList;
 
@@ -81,22 +81,22 @@ public class LocationMapsViewActivity extends AppCompatActivity implements OnMap
         private void render(Marker marker, View view) {
             //get the data from marker
             int garbageImage, containerImage, paperImage;
-            int garbage, container, paper;
+            boolean garbage, container, paper;
             Object tag = marker.getTag();
-            int[] markerTag = (int[]) tag;
-            garbage = markerTag[1];
-            container = markerTag[2];
-            paper = markerTag[3];
+            boolean[] markerTag = (boolean[]) tag;
+            garbage = markerTag[0];
+            container = markerTag[1];
+            paper = markerTag[2];
 
             //Make the images visible based on the properties of this location
-            if (garbage == 1) {
+            if (garbage) {
                 ((ImageView) view.findViewById(R.id.garbage_imageView)).
                         setVisibility(View.VISIBLE);
             }
-            if (container == 1)
+            if (container)
                 ((ImageView) view.findViewById(R.id.container_imageView)).
                         setVisibility(View.VISIBLE);
-            if (paper == 1) {
+            if (paper) {
                 ((ImageView) view.findViewById(R.id.paper_imageView)).
                         setVisibility(View.VISIBLE);
             }
@@ -117,8 +117,8 @@ public class LocationMapsViewActivity extends AppCompatActivity implements OnMap
     //ArrayList of all the markers
     ArrayList<Marker> mMarkerArrayList = new ArrayList<>();
 
-    //Cursor object containing the data
-    private Cursor mCursor;
+    //ArrayList to be used for locations
+    private ArrayList<MyLocation> myLocationArrayList = new ArrayList<>();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -152,6 +152,9 @@ public class LocationMapsViewActivity extends AppCompatActivity implements OnMap
                 }
             }
         });//setOnCheckedChangeListener
+
+        //Get the ArrayList
+        myLocationArrayList = MainActivity.getGlobalLocationArrayList();
     }//onCreate
 
     /**
@@ -211,79 +214,34 @@ public class LocationMapsViewActivity extends AppCompatActivity implements OnMap
         /**
          * First we need to query the database and get all the data (mCursor object).
          */
-        //Define a projection for the columns we want
-        //For now, I am not getting the establishment data since I have not collected any
-        String[] projection = {
-                LocationEntry._ID,
-                LocationEntry.COLUMN_LOCATION_LATITUDE,
-                LocationEntry.COLUMN_LOCATION_LONGITUDE,
-                LocationEntry.COLUMN_LOCATION_GARBAGE,
-                LocationEntry.COLUMN_LOCATION_PAPER,
-                LocationEntry.COLUMN_LOCATION_CONTAINER,
-                LocationEntry.COLUMN_LOCATION_COMMENT
-        };
 
-        //Query the database using our projection. The data is then passed back is a mCursor Object
-        Cursor mCursor = getContentResolver().query(
-                LocationEntry.CONTENT_URI,     //The content Uri
-                projection,               //The columns to return for each row
-                null,            //Selection criteria
-                null,         //Selection criteria
-                null            //The sort order for returned rows
-        );
-
-        //get the column ID for each column
-        int idColumnIndex = mCursor.getColumnIndex(LocationEntry._ID);
-        int latColumnIndex = mCursor.getColumnIndex(LocationEntry.COLUMN_LOCATION_LATITUDE);
-        int lngColumnIndex = mCursor.getColumnIndex(LocationEntry.COLUMN_LOCATION_LONGITUDE);
-        int garbageColumnIndex = mCursor.getColumnIndex(LocationEntry.COLUMN_LOCATION_GARBAGE);
-        int containerColumnIndex = mCursor.getColumnIndex(LocationEntry.COLUMN_LOCATION_CONTAINER);
-        int paperColumnIndex = mCursor.getColumnIndex(LocationEntry.COLUMN_LOCATION_PAPER);
-        int commentColumnIndex = mCursor.getColumnIndex(LocationEntry.COLUMN_LOCATION_COMMENT);
 
         /**
-         * This part uses the loop to go through each row, extract all the data, and
+         * This part uses the loop to go through each MyLocation object in the ArrayList, extract
+         * all the data, and set the markers
          */
         //TODO: set the marker colors, based on what is available at that spot
+
         //create a marker object
         Marker mMaker;
-        int j=0;
-        while (mCursor.moveToNext()) {
-            //get the data from mCursor
-            int id = mCursor.getInt(idColumnIndex);
-            LatLng latLng = new LatLng(mCursor.getDouble(latColumnIndex),
-                    mCursor.getDouble(lngColumnIndex));
-            int garbage = mCursor.getInt(garbageColumnIndex);
-            int container = mCursor.getInt(containerColumnIndex);
-            int paper = mCursor.getInt(paperColumnIndex);
-            String comment = mCursor.getString(commentColumnIndex);
-            int[] booleanValues = {id, garbage, container, paper};
-
+        //This goes through the ArrayList for every MyLocation object and sets up the marker
+        for (MyLocation myLocation: myLocationArrayList) {
+            //get the boolean values
+            boolean[] booleanValues = {myLocation.garbage, myLocation.container, myLocation.paper,
+                myLocation.establishment};
             //Make a new MarkerOptions object to add the data
             mMaker = mMap.addMarker(new MarkerOptions()
-                    .position(latLng)
-                    .snippet(comment));
+                    .position(myLocation.latLng)
+                    .title("Location: " + myLocation._id));
             //Add our int array as an object to our marker
             mMaker.setTag(booleanValues);
-
-            //This section decides what to be shown in the title (garbage, container, or paper based
-            //on what is available at that spot.
-            String title = "";
-            if (garbage == 1) {
-                title += "Garbage  ";
-            }
-            if (container == 1) {
-                title += "Container  ";
-            }
-            if (paper == 1) {
-                title += "Paper";
-            }
-            mMaker.setTitle(title);
-
+            //Add the comment if not null
+            if (myLocation.comment != null) {
+                mMaker.setSnippet(myLocation.comment);
+            }//if
+            //Add the marker to the ArrayList
             mMarkerArrayList.add(mMaker);
-            j++;
-        }//while
-        Toast.makeText(this, Integer.toString(j), Toast.LENGTH_SHORT).show();
+        }//for
     }//populateMap
 
     /**
@@ -314,9 +272,8 @@ public class LocationMapsViewActivity extends AppCompatActivity implements OnMap
             //this is the case that the check box is turned on. Make markers with garbgae tag visible
             for (Marker marker: mMarkerArrayList) {
                 Object tagObject = marker.getTag();
-                int[] tagArray = (int[]) tagObject;
-                int garbage = tagArray[1];
-                if (garbage == 1) {
+                boolean[] tagArray = (boolean[]) tagObject;
+                if (tagArray[1]) {
                     marker.setVisible(true);
                 }
             }//for
@@ -324,9 +281,8 @@ public class LocationMapsViewActivity extends AppCompatActivity implements OnMap
             //This is for when they turned it off, make all the ones with garbage tag invisible
             for (Marker marker: mMarkerArrayList) {
                 Object tagObject = marker.getTag();
-                int[] tagArray = (int[]) tagObject;
-                int garbage = tagArray[1];
-                if (garbage == 1) {
+                boolean[] tagArray = (boolean[]) tagObject;
+                if (tagArray[1]) {
                     marker.setVisible(false);
                 }
             }//for

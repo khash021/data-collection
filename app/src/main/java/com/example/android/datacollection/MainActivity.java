@@ -280,7 +280,7 @@ public class MainActivity extends AppCompatActivity  {
                         cursor.getString(dateColumnIndex));
                 //check the comments and add them if they are not null
                 if (cursor.getString(commentColumnIndex) != null) {
-                    mMyLocation.coment = cursor.getString(commentColumnIndex);
+                    mMyLocation.comment = cursor.getString(commentColumnIndex);
                 }
                 if (cursor.getString(establishmentCommentColumnIndex) != null) {
                     mMyLocation.establishmentComment = cursor.getString(establishmentCommentColumnIndex);

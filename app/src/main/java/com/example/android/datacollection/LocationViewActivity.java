@@ -21,9 +21,13 @@ import com.example.android.datacollection.Database.LocationContract.LocationEntr
  * Created by Khashayar on 2/23/2018.
  *
  * This is the class to show location data using a ListView and CursorAdapter
+ *
+ * Since this whole class is an Cursor Adapter, and we are sorting the data as well, we will not
+ * use the globalLocationArrayList and stick to the database query.
  */
 
-public class LocationViewActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
+public class LocationViewActivity extends AppCompatActivity implements
+        LoaderManager.LoaderCallbacks<Cursor> {
 
     private final String TAG ="LocationViewActivity";
 

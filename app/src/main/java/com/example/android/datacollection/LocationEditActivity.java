@@ -33,7 +33,7 @@ import java.util.Calendar;
  * Created by Khashayar on 2/23/2018.
  */
 
-public class LocationEdit extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>{
+public class LocationEditActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>{
 
     //Identifier for the location data loader
     private static final int EXISTING_LOCATION_LOADER = 0;
@@ -182,15 +182,15 @@ public class LocationEdit extends AppCompatActivity implements LoaderManager.Loa
                                     mEstablishmentText.getText().toString().trim().length() < 1)) {
                         boolean result = saveLocation();
                         if (result) {
-                            Toast.makeText(LocationEdit.this,
+                            Toast.makeText(LocationEditActivity.this,
                                     "Location updated successfully",Toast.LENGTH_SHORT).show();
                             finish();
                         } else  {
-                            Toast.makeText(LocationEdit.this, "Error with updating",
+                            Toast.makeText(LocationEditActivity.this, "Error with updating",
                                     Toast.LENGTH_SHORT).show();
                         }
                     } else {
-                        Toast.makeText(LocationEdit.this, "If the establishment" +
+                        Toast.makeText(LocationEditActivity.this, "If the establishment" +
                                 " checkbox is ticked, there needs to be a comment; and vice versa",
                                 Toast.LENGTH_SHORT).show();
                     }
@@ -205,11 +205,11 @@ public class LocationEdit extends AppCompatActivity implements LoaderManager.Loa
                 int result = getContentResolver().delete(mCurrentLocationUri, null , null);
                 //Check to see if the delete was successful
                 if (result == 1) {
-                    Toast.makeText(LocationEdit.this,
+                    Toast.makeText(LocationEditActivity.this,
                             "Location deleted", Toast.LENGTH_SHORT).show();
                     finish();
                 } else {
-                    Toast.makeText(LocationEdit.this,
+                    Toast.makeText(LocationEditActivity.this,
                             "Error with deleting the last entry", Toast.LENGTH_SHORT).show();
                 }
             }
@@ -264,7 +264,7 @@ public class LocationEdit extends AppCompatActivity implements LoaderManager.Loa
 
         //Get the text from comments edit text
         String mComment = mCommentText.getText().toString().trim();
-        mComment += "\nUpdated on " + LocationEnter.mDateFormat.format(Calendar.getInstance().getTime());
+        mComment += "\nUpdated on " + LocationEnterActivity.mDateFormat.format(Calendar.getInstance().getTime());
         String mEstablishmentComment = mEstablishmentText.getText().toString().trim();
 
         // Create a new map of values,
@@ -429,4 +429,4 @@ public class LocationEdit extends AppCompatActivity implements LoaderManager.Loa
         discardDialog();
         return true;
     }//onOptionsItemSelected
-}//LocationEdit class
+}//LocationEditActivity class

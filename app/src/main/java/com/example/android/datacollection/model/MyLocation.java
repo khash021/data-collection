@@ -16,16 +16,16 @@ import com.google.android.gms.maps.model.LatLng;
 public class MyLocation {
 
     //Variables
-    LatLng latLng;
-    int _id;
-    String coment, establishmentComment, timeDate;
-    boolean garbage, container, paper, establishment;
+    public LatLng latLng;
+    public int _id;
+    public String coment, establishmentComment, timeDate;
+    public boolean garbage, container, paper, establishment;
 
     //Defauly constructor
-    MyLocation(){}
+    public MyLocation(){}
 
     //Constructor with input arguments
-    MyLocation (int id, double lat, double lng, int intGarbage, int intContainer, int intPaper,
+    public MyLocation (int id, double lat, double lng, int intGarbage, int intContainer, int intPaper,
                 int intEstablishment, String inputTimeDate ) {
         latLng = new LatLng(lat, lng);
         _id = id;

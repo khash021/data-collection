@@ -40,7 +40,7 @@ import java.util.Calendar;
  * This class is for entering data
  */
 
-public class LocationEnter extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks,
+public class LocationEnterActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener, LocationListener {
 
     //Tag to be used for all our logs
@@ -225,12 +225,12 @@ public class LocationEnter extends AppCompatActivity implements GoogleApiClient.
                         mEstablishmentText.setText("");
                     }
                 } else {
-                        Toast.makeText(LocationEnter.this, "If the establishment" +
+                        Toast.makeText(LocationEnterActivity.this, "If the establishment" +
                                 " checkbox is ticked, there needs to be a comment; and vice versa",
                                 Toast.LENGTH_SHORT).show();
                     }
                 } else {
-                    Toast.makeText(LocationEnter.this, "Location is not acquired yet, "
+                    Toast.makeText(LocationEnterActivity.this, "Location is not acquired yet, "
                             + "please wait for the location check box and try again",
                             Toast.LENGTH_SHORT).show();
                 }
@@ -500,4 +500,4 @@ public class LocationEnter extends AppCompatActivity implements GoogleApiClient.
         Log.i(TAG, "GoogleApiClient connection failed");
     } //onConnectionFailed
 
-} //LocationEnter Class
+} //LocationEnterActivity Class

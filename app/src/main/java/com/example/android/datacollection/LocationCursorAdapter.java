@@ -68,7 +68,7 @@ public class LocationCursorAdapter extends CursorAdapter {
          *  Read the location attributes from the Cursor for the current location. Now that we have
          *  the column index, we can get the value associated with that column index by
          *  cursor.getString method and we pass in our index. It is possible to put
-         *  cursor.getColumnIndex(LocationEnter._ID) as the input argument of the getString method;
+         *  cursor.getColumnIndex(LocationEnterActivity._ID) as the input argument of the getString method;
          *  I left it this way to understand better.
          *  We will also handle comments/establishment with onTouch popup message to conserve space
          *  in the listview

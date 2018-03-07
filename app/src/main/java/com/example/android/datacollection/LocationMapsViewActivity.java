@@ -31,7 +31,7 @@ import java.util.ArrayList;
  * This is the class that shows the data on Google Maps (in the app)
  */
 
-public class MapsView extends AppCompatActivity implements OnMapReadyCallback,
+public class LocationMapsViewActivity extends AppCompatActivity implements OnMapReadyCallback,
         GoogleMap.OnMarkerClickListener {
 
     private String TAG =this.getClass().getSimpleName();
@@ -340,6 +340,6 @@ public class MapsView extends AppCompatActivity implements OnMapReadyCallback,
     }//onMarkerClick
 
 
-}//MapsView class
+}//LocationMapsViewActivity class
 
 

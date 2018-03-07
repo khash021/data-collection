@@ -23,9 +23,9 @@ import com.example.android.datacollection.Database.LocationContract.LocationEntr
  * This is the class to show location data using a ListView and CursorAdapter
  */
 
-public class LocationView extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
+public class LocationViewActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
 
-    private final String TAG ="LocationView";
+    private final String TAG ="LocationViewActivity";
 
     //Integer loader constant; you can set it up as any unique integer
     private final static int LOCATION_LOADER = 0;
@@ -55,7 +55,7 @@ public class LocationView extends AppCompatActivity implements LoaderManager.Loa
         locationListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                Toast.makeText(LocationView.this, "Id is: " + Long.toString(id),
+                Toast.makeText(LocationViewActivity.this, "Id is: " + Long.toString(id),
                         Toast.LENGTH_SHORT).show();
                 return true;
             }
@@ -66,7 +66,7 @@ public class LocationView extends AppCompatActivity implements LoaderManager.Loa
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 //Create new Intent to go to {@link EditorActivity}
-                Intent intent = new Intent(LocationView.this, LocationEdit.class);
+                Intent intent = new Intent(LocationViewActivity.this, LocationEditActivity.class);
 
                 /**
                  * From the content URi that represents the specific location that was clicked, by
@@ -80,7 +80,7 @@ public class LocationView extends AppCompatActivity implements LoaderManager.Loa
                 //set the Uri on the data field of the intent
                 intent.setData(currentPetUri);
 
-                //Launch the {@link LocationEdit} to display data for the current location
+                //Launch the {@link LocationEditActivity} to display data for the current location
                 startActivity(intent);
             }
         });//onClickListener ListView
@@ -131,6 +131,6 @@ public class LocationView extends AppCompatActivity implements LoaderManager.Loa
         Log.v(TAG, "onStart called");
         super.onStart();
     }
-}//LocationView Class
+}//LocationViewActivity Class
 
 

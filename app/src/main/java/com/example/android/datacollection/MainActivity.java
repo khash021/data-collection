@@ -20,6 +20,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.android.datacollection.Database.LocationContract.LocationEntry;
+import com.example.android.datacollection.model.MyLocation;
+
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity  {
 
@@ -28,6 +31,9 @@ public class MainActivity extends AppCompatActivity  {
     private final String TAG = "Main Activity";
     //Request location constant for location permission
     static final int REQUEST_CODE = 0;
+    //Location ArrayList
+    private static ArrayList<MyLocation> globalLocationArrayList;
+    private MyLocation mMyLocation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,14 +73,14 @@ public class MainActivity extends AppCompatActivity  {
                     REQUEST_CODE);
         }
 
-        //Enter data button (this takes us to the LocationEnter activity
+        //Enter data button (this takes us to the LocationEnterActivity activity
         Button enterDataButton = findViewById(R.id.enter_data);
         enterDataButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //This creates an Intent to open the LocationEnter Class and then use that intent
-                //to start LocationEnter activity
-                Intent intent = new Intent(MainActivity.this, LocationEnter.class);
+                //This creates an Intent to open the LocationEnterActivity Class and then use that intent
+                //to start LocationEnterActivity activity
+                Intent intent = new Intent(MainActivity.this, LocationEnterActivity.class);
                 startActivity(intent);
             }
         }); //onClickListener-enter data
@@ -97,8 +103,8 @@ public class MainActivity extends AppCompatActivity  {
         showDatabaseButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //Open the LocationView activity
-                Intent intent = new Intent(MainActivity.this, LocationView.class);
+                //Open the LocationViewActivity activity
+                Intent intent = new Intent(MainActivity.this, LocationViewActivity.class);
                 startActivity(intent);
             }
         });//onClickListener - show database
@@ -108,7 +114,7 @@ public class MainActivity extends AppCompatActivity  {
         viewDataMaps.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent =new Intent(MainActivity.this, MapsView.class);
+                Intent intent =new Intent(MainActivity.this, LocationMapsViewActivity.class);
                 startActivity(intent);
             }
         });// Goole Maps button
@@ -139,6 +145,9 @@ public class MainActivity extends AppCompatActivity  {
         //this returns a human-readable name
         String activeNetworkString = mActiveNetwork.getTypeName();
         networkTextView.append(activeNetworkString);
+
+        //populate the arrayList
+        populateArrayList();
 
     } //OnCreate
 
@@ -193,7 +202,7 @@ public class MainActivity extends AppCompatActivity  {
         Log.d(TAG, "Started");
         super.onStart();
         displayDatabaseInfo();
-    }
+    }//onStart
 
     @Override
     protected void onPause() {
@@ -211,11 +220,32 @@ public class MainActivity extends AppCompatActivity  {
     } //onResume
 
     private void displayDatabaseInfo(){
+        TextView counterTextView = findViewById(R.id.data_counter);
+        counterTextView.setText("Current number of data-points in database: " +
+                globalLocationArrayList.size());
 
+    }//displayDatabaseInfo
+
+    /**
+     * Helper method for querying the database, get all the location data and save them in an
+     * ArrayList<MyLocation> to be used by all other activities that need all the data, such as
+     * View on map,etc
+     * @return ArrayList<MyLocation>
+     */
+    private ArrayList<MyLocation> populateArrayList(){
         //this is what we are going to pass into the Query method. This String is similar
         //to the statement after SELECT, we tell it which columns we want, here we want everything
         String[] projection = {
                 LocationEntry._ID,
+                LocationEntry.COLUMN_LOCATION_LATITUDE,
+                LocationEntry.COLUMN_LOCATION_LONGITUDE,
+                LocationEntry.COLUMN_LOCATION_GARBAGE,
+                LocationEntry.COLUMN_LOCATION_CONTAINER,
+                LocationEntry.COLUMN_LOCATION_PAPER,
+                LocationEntry.COLUMN_LOCATION_ESTABLISHMENT,
+                LocationEntry.COLUMN_LOCATION_COMMENT,
+                LocationEntry.COLUMN_LOCATION_ESTABLISHMENT_COMMENT,
+                LocationEntry.COLUMN_LOCATION_DATE
         };
 
         Cursor cursor = getContentResolver().query(
@@ -225,19 +255,54 @@ public class MainActivity extends AppCompatActivity  {
                 null,         //Selection criteria
                 null            //The sort order for returned rows
         );
-
-        TextView counterTextView = findViewById(R.id.data_counter);
-
+        //get the column id of the table
+        int idColumnIndex = cursor.getColumnIndex(LocationEntry._ID);
+        int latColumnIndex = cursor.getColumnIndex(LocationEntry.COLUMN_LOCATION_LATITUDE);
+        int lngColumnIndex = cursor.getColumnIndex(LocationEntry.COLUMN_LOCATION_LONGITUDE);
+        int garbageColumnIndex = cursor.getColumnIndex(LocationEntry.COLUMN_LOCATION_GARBAGE);
+        int containerColumnIndex = cursor.getColumnIndex(LocationEntry.COLUMN_LOCATION_CONTAINER);
+        int paperColumnIndex = cursor.getColumnIndex(LocationEntry.COLUMN_LOCATION_PAPER);
+        int establishmentColumnIndex = cursor.getColumnIndex(LocationEntry.COLUMN_LOCATION_ESTABLISHMENT);
+        int commentColumnIndex = cursor.getColumnIndex(LocationEntry.COLUMN_LOCATION_COMMENT);
+        int establishmentCommentColumnIndex = cursor.getColumnIndex(LocationEntry.COLUMN_LOCATION_ESTABLISHMENT_COMMENT);
+        int dateColumnIndex = cursor.getColumnIndex(LocationEntry.COLUMN_LOCATION_DATE);
+        //initialize the ArrayList and populate the arrayList
+        globalLocationArrayList = new ArrayList<MyLocation>();
         try {
-            counterTextView.setText("Current number of data-points in database: " +
-                    cursor.getCount());
-
+            while (cursor.moveToNext()) {
+                mMyLocation = new MyLocation(cursor.getInt(idColumnIndex),
+                        cursor.getDouble(latColumnIndex),
+                        cursor.getDouble(lngColumnIndex),
+                        cursor.getInt(garbageColumnIndex),
+                        cursor.getInt(containerColumnIndex),
+                        cursor.getInt(paperColumnIndex),
+                        cursor.getInt(establishmentColumnIndex),
+                        cursor.getString(dateColumnIndex));
+                //check the comments and add them if they are not null
+                if (cursor.getString(commentColumnIndex) != null) {
+                    mMyLocation.coment = cursor.getString(commentColumnIndex);
+                }
+                if (cursor.getString(establishmentCommentColumnIndex) != null) {
+                    mMyLocation.establishmentComment = cursor.getString(establishmentCommentColumnIndex);
+                }
+                //Add it to the ArrayList
+                globalLocationArrayList.add(mMyLocation);
+            }//while
         } finally {
-            // Always close the cursor when you're done reading from it. This releases all its
-            // resources and makes it invalid.
-            cursor.close();
-        } //finally
 
-    }//displayDatabaseInfo
+            //close the cursor
+            cursor.close();
+            //Return the ArrayList
+            return globalLocationArrayList;
+        }//FINALLY
+    }//populateArrayList
+
+    /**
+     * Helper method for other activities to get the ArrayList
+     * @return ArrayList<MyLOCATION>
+     */
+    public static ArrayList<MyLocation> getGlobalLocationArrayList(){
+        return globalLocationArrayList;
+    }//getGlobalLocationArrayList
 
 } //Main Activity

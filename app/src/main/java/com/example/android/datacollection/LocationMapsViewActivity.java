@@ -93,6 +93,9 @@ public class LocationMapsViewActivity extends AppCompatActivity implements OnMap
             container = markerTag[1];
             paper = markerTag[2];
 
+            //set the title (for development phase)
+            ((TextView) view.findViewById(R.id.title_textView)).setText(marker.getTitle());
+
             //Make the images visible based on the properties of this location
             if (garbage) {
                 ((ImageView) view.findViewById(R.id.garbage_imageView)).
@@ -109,6 +112,8 @@ public class LocationMapsViewActivity extends AppCompatActivity implements OnMap
             //Add comment
             String comment = marker.getSnippet().trim();
             if (comment.length() > 1)
+                //Make the view visible
+                ((TextView) view.findViewById(R.id.comment_textView)).setVisibility(View.VISIBLE);
                 ((TextView) view.findViewById(R.id.comment_textView)).setText(comment);
         }//render
     }//CustomInfoWindowAdapter
@@ -147,9 +152,15 @@ public class LocationMapsViewActivity extends AppCompatActivity implements OnMap
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
-        //initialize the activity with Garbage check box set, showing all the markers
+        //initialize the activity with all check boxes set, showing all the markers
         mGarbageCheckbox = findViewById(R.id.garbage_checkbox);
         mGarbageCheckbox.setChecked(true);
+        mContainerCheckbox = findViewById(R.id.container_checkbox);
+        mContainerCheckbox.setChecked(true);
+        mPaperCheckbox = findViewById(R.id.paper_checkbox);
+        mPaperCheckbox.setChecked(true);
+
+        //Change listener for Garbage checkbox
         mGarbageCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -160,9 +171,37 @@ public class LocationMapsViewActivity extends AppCompatActivity implements OnMap
                             Toast.LENGTH_SHORT).show();
                     //since nothing was done reverse the check box to its original format
                     mGarbageCheckbox.setChecked(!isChecked);
-                }
+                }//if
             }
-        });//setOnCheckedChangeListener
+        });//Garbage Checkbox listener
+
+        //Change listener fot Container checkbox
+        mContainerCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                boolean result = containerFilter(isChecked);
+                if (!result) {
+                    Toast.makeText(getApplicationContext(), "Map is not ready",
+                            Toast.LENGTH_SHORT).show();
+                    //since nothing was done reverse the check box to its original format
+                    mContainerCheckbox.setChecked(!isChecked);
+                }//if
+            }
+        });//Container Checkbox listener
+
+        //Change listener fot Paper checkbox
+        mContainerCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                boolean result = paperFilter(isChecked);
+                if (!result) {
+                    Toast.makeText(getApplicationContext(), "Map is not ready",
+                            Toast.LENGTH_SHORT).show();
+                    //since nothing was done reverse the check box to its original format
+                    mContainerCheckbox.setChecked(!isChecked);
+                }//if
+            }
+        });//Paper Checkbox listener
 
         //build Google Api Client
         buildGoogleApiClient();
@@ -300,8 +339,45 @@ public class LocationMapsViewActivity extends AppCompatActivity implements OnMap
         if (!checkMapReady()) {
             return false;
         }//if Map Not ready
+
+        //This means the new state is true (checked)
         if (b) {
             //this is the case that the check box is turned on. Make markers with garbgae tag visible
+            for (Marker marker: mMarkerArrayList) {
+                Object tagObject = marker.getTag();
+                boolean[] tagArray = (boolean[]) tagObject;
+                if (tagArray[0]) {
+                    marker.setVisible(true);
+                }
+            }//for
+        } else {
+            //This is for when they turned it off, make all the ones with garbage tag invisible
+            for (Marker marker: mMarkerArrayList) {
+                Object tagObject = marker.getTag();
+                boolean[] tagArray = (boolean[]) tagObject;
+                if (tagArray[0]) {
+                    marker.setVisible(false);
+                }
+            }//for
+        }
+        return true;
+    }//garbageFilter
+
+    /**
+     *   Helper method for container checkbox
+     *   return true if the map was ready and the operation was successful
+     *   false if the map was not ready and nothing happened so that the chekbox can be turned into
+     *   original state.
+     */
+    private boolean containerFilter(boolean b){
+        //check to see if map is ready
+        if (!checkMapReady()) {
+            return false;
+        }//if Map Not ready
+
+        //This means the new state is true (checked)
+        if (b) {
+            //this is the case that the check box is turned on. Make markers with container tag visible
             for (Marker marker: mMarkerArrayList) {
                 Object tagObject = marker.getTag();
                 boolean[] tagArray = (boolean[]) tagObject;
@@ -320,7 +396,42 @@ public class LocationMapsViewActivity extends AppCompatActivity implements OnMap
             }//for
         }
         return true;
-    }//garbageFilter
+    }//containerFilter
+
+    /**
+     *   Helper method for paper checkbox
+     *   return true if the map was ready and the operation was successful
+     *   false if the map was not ready and nothing happened so that the chekbox can be turned into
+     *   original state.
+     */
+    private boolean paperFilter(boolean b){
+        //check to see if map is ready
+        if (!checkMapReady()) {
+            return false;
+        }//if Map Not ready
+
+        //This means the new state is true (checked)
+        if (b) {
+            //this is the case that the check box is turned on. Make markers with container tag visible
+            for (Marker marker: mMarkerArrayList) {
+                Object tagObject = marker.getTag();
+                boolean[] tagArray = (boolean[]) tagObject;
+                if (tagArray[2]) {
+                    marker.setVisible(true);
+                }
+            }//for
+        } else {
+            //This is for when they turned it off, make all the ones with garbage tag invisible
+            for (Marker marker: mMarkerArrayList) {
+                Object tagObject = marker.getTag();
+                boolean[] tagArray = (boolean[]) tagObject;
+                if (tagArray[2]) {
+                    marker.setVisible(false);
+                }
+            }//for
+        }
+        return true;
+    }//paperFilter
 
     /**
      * Helper method for initializing the Google Api Client.

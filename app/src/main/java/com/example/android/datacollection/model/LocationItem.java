@@ -7,7 +7,7 @@ import com.google.maps.android.clustering.ClusterItem;
  * Created by Khashayar on 3/5/2018.
  *
  * This is the Items (markers) that are going to be used for creating Marker Clusters.
- * 
+ *
  */
 
 public class LocationItem implements ClusterItem {

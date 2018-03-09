@@ -73,14 +73,14 @@ public class MainActivity extends AppCompatActivity  {
                     REQUEST_CODE);
         }
 
-        //Enter data button (this takes us to the LocationEnterActivity activity
+        //Enter data button (this takes us to the EnterLocationActivity activity
         Button enterDataButton = findViewById(R.id.enter_data);
         enterDataButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //This creates an Intent to open the LocationEnterActivity Class and then use that intent
-                //to start LocationEnterActivity activity
-                Intent intent = new Intent(MainActivity.this, LocationEnterActivity.class);
+                //This creates an Intent to open the EnterLocationActivity Class and then use that intent
+                //to start EnterLocationActivity activity
+                Intent intent = new Intent(MainActivity.this, EnterLocationActivity.class);
                 startActivity(intent);
             }
         }); //onClickListener-enter data
@@ -103,8 +103,8 @@ public class MainActivity extends AppCompatActivity  {
         showDatabaseButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //Open the LocationViewActivity activity
-                Intent intent = new Intent(MainActivity.this, LocationViewActivity.class);
+                //Open the ViewLocationActivity activity
+                Intent intent = new Intent(MainActivity.this, ViewLocationActivity.class);
                 startActivity(intent);
             }
         });//onClickListener - show database
@@ -114,7 +114,7 @@ public class MainActivity extends AppCompatActivity  {
         viewDataMaps.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent =new Intent(MainActivity.this, LocationMapsViewActivity.class);
+                Intent intent =new Intent(MainActivity.this, MapViewActivity.class);
                 startActivity(intent);
             }
         });// Goole Maps button

@@ -147,6 +147,6 @@ public class LocationContract {
 
 
 
-    }//LocationEnterActivity
+    }//EnterLocationActivity
 
 }//main

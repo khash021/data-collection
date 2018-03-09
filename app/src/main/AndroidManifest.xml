@@ -31,7 +31,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".LocationEnterActivity"
+            android:name=".EnterLocationActivity"
             android:label="Data Entry"
             android:parentActivityName=".MainActivity" >
         //Providing up navigation
@@ -40,7 +40,7 @@
             android:value=".MainActivity" />
         </activity>
         <activity
-            android:name=".LocationViewActivity"
+            android:name=".ViewLocationActivity"
             android:label="View Data"
             android:parentActivityName=".MainActivity" >
             //Providing up navigation
@@ -49,16 +49,16 @@
                 android:value=".MainActivity" />
         </activity>
         <activity
-            android:name=".LocationEditActivity"
+            android:name=".EditLocationActivity"
             android:label="Edit Data"
-            android:parentActivityName=".LocationViewActivity" >
+            android:parentActivityName=".ViewLocationActivity" >
             //Providing up navigation
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
         </activity>
 
-        <activity android:name=".LocationMapsViewActivity"
+        <activity android:name=".MapViewActivity"
             android:label="Maps View"
             android:parentActivityName=".MainActivity"/>
 

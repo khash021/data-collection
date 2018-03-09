@@ -34,7 +34,7 @@ import java.util.ArrayList;
  * This is the class that shows the data on Google Maps (in the app)
  */
 
-public class LocationMapsViewActivity extends AppCompatActivity implements OnMapReadyCallback,
+public class MapViewActivity extends AppCompatActivity implements OnMapReadyCallback,
         GoogleMap.OnMarkerClickListener,
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener {
@@ -122,10 +122,10 @@ public class LocationMapsViewActivity extends AppCompatActivity implements OnMap
     //Google Maps object
     GoogleMap mMap;
 
-    CheckBox mGarbageCheckbox, mContainerCheckbox, mPaperCheckbox;
+    private CheckBox mGarbageCheckbox, mContainerCheckbox, mPaperCheckbox;
 
     //ArrayList of all the markers
-    ArrayList<Marker> mMarkerArrayList = new ArrayList<>();
+    private ArrayList<Marker> mMarkerArrayList = new ArrayList<>();
 
     //ArrayList to be used for locations
     private ArrayList<MyLocation> myLocationArrayList = new ArrayList<>();
@@ -134,11 +134,11 @@ public class LocationMapsViewActivity extends AppCompatActivity implements OnMap
     protected GoogleApiClient mGoogleApiClient;
 
     //location object and corresponding LatLng object
-    Location mMyLocation;
-    LatLng mMyLatLng;
+    private Location mMyLocation;
+    private LatLng mMyLatLng;
 
     //Vancouver dt mLocationLimit
-    LatLngBounds mLocationLimit = new LatLngBounds(new LatLng( 49.268642, -123.148639),
+    private LatLngBounds mLocationLimit = new LatLngBounds(new LatLng( 49.268642, -123.148639),
             new LatLng( 49.300045, -123.095893));
 
     @Override
@@ -455,6 +455,10 @@ public class LocationMapsViewActivity extends AppCompatActivity implements OnMap
                 .build();
     }//buildGoogleApiClient
 
+    /**
+     * Adding this is crucial for obtaining the location. This is when the Google Api client gets
+     * connewcted. Without it, the Google Api Client gets built, but not connected
+     */
     @Override
     protected void onStart() {
         super.onStart();
@@ -492,7 +496,7 @@ public class LocationMapsViewActivity extends AppCompatActivity implements OnMap
             //Check to see if the user's location is within bounds
             if (mLocationLimit.contains(mMyLatLng)) {
                 //Move the camera to user's location
-                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mMyLatLng, 15.0f));
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mMyLatLng, 16.0f));
             } else {
                 //If the user is outside the bounds, show a Toast message
                 Toast.makeText(this, "You are currently outside of supported area",
@@ -512,6 +516,6 @@ public class LocationMapsViewActivity extends AppCompatActivity implements OnMap
         Log.i(TAG, "Connection failed: " + connectionResult.getErrorCode());
     }//onConnectionFailed
 
-}//LocationMapsViewActivity class
+}//MapViewActivity class
 
 

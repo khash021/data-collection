@@ -34,6 +34,8 @@ import java.util.ArrayList;
  * This is the class that shows the data on Google Maps (in the app)
  */
 
+//TODO: There might be something wrong with the setting of images in the info window, because the methods to turn off and on seem to work fine but in the NE corner there is some disprepency
+
 public class MapViewActivity extends AppCompatActivity implements OnMapReadyCallback,
         GoogleMap.OnMarkerClickListener,
         GoogleApiClient.ConnectionCallbacks,
@@ -137,9 +139,20 @@ public class MapViewActivity extends AppCompatActivity implements OnMapReadyCall
     private Location mMyLocation;
     private LatLng mMyLatLng;
 
-    //Vancouver dt mLocationLimit
-    private LatLngBounds mLocationLimit = new LatLngBounds(new LatLng( 49.268642, -123.148639),
+    //Vancouver dt bounds
+    private LatLngBounds VANCOUVER_DT_BOUND = new LatLngBounds(new LatLng( 49.268642, -123.148639),
             new LatLng( 49.300045, -123.095893));
+    //Vancouver bound
+    private LatLngBounds VANCOUVER_BOUND = new LatLngBounds(new LatLng(  49.239488, -123.270513),
+            new LatLng( 49.300045, -123.095893));
+    //UBC Bound
+    private LatLngBounds UBC_BOUND = new LatLngBounds(new LatLng(  49.239488, -123.270513),
+            new LatLng(  49.281679, -123.20184));
+    //Our default downtoan start location
+    LatLng DOWNTOWN_CENTER =  new LatLng( 49.282733, -123.120732);
+    //Our default UBC start location
+    LatLng UBC_CENTER =  new LatLng(  49.262233, -123.249875);
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -198,7 +211,7 @@ public class MapViewActivity extends AppCompatActivity implements OnMapReadyCall
         });//Container Checkbox listener
 
         //Change listener fot Paper checkbox
-        mContainerCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        mPaperCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 boolean result = paperFilter(isChecked);
@@ -233,12 +246,12 @@ public class MapViewActivity extends AppCompatActivity implements OnMapReadyCall
 
         //restricting users panning to Vancouver dt area. First input is the SW corner, and the
         // second NE corner of the restricted pan area
-        mMap.setLatLngBoundsForCameraTarget(mLocationLimit);
+        mMap.setLatLngBoundsForCameraTarget(VANCOUVER_BOUND);
 
         //Enable my location layer
         mMap.setMyLocationEnabled(true);
 
-        //Since the pan is limited, we should also mLocationLimit min zoom, other wise they can zoom all the
+        //Since the pan is limited, we should also VANCOUVER_DT_BOUND min zoom, other wise they can zoom all the
         //way out and the bounds would be useless
         mMap.setMinZoomPreference(13.0f);
 
@@ -246,15 +259,14 @@ public class MapViewActivity extends AppCompatActivity implements OnMapReadyCall
         populateMap();
 
         /**
-         * If mMyLocation is not null (we have our lcoation), it checks to see if it falls within
-         * our mLocationLimit bounds (i.e. downtown Vancouver). If it is, it initializes map at that
+         * If mMyLocation is not null (we have our location), it checks to see if it falls within
+         * our VANCOUVER_DT_BOUND bounds (i.e. downtown Vancouver). If it is, it initializes map at that
          * location, otherwise use the center of downtown
          */
-        //Our default start location
-        LatLng centerDowntownLocation =  new LatLng( 49.282733f, -123.120732f);
 
-        //Initialize the map in center of downtown
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(centerDowntownLocation, 15.0f));
+
+        //Initialize the map in center of downtown/UBC
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(UBC_CENTER, 15.0f));
 
         // Setting the our custom info window, passing out helper method
         mMap.setInfoWindowAdapter(new CustomInfoWindowAdapter());
@@ -265,7 +277,7 @@ public class MapViewActivity extends AppCompatActivity implements OnMapReadyCall
             @Override
             public boolean onMyLocationButtonClick() {
                 //check to see if the user's location is within bounds
-                if (mLocationLimit.contains(mMyLatLng)) {
+                if (UBC_BOUND.contains(mMyLatLng)) {
                     //do nothing default behavior will move the camera to user's lcoation
                     return false;
                 } else {
@@ -349,24 +361,45 @@ public class MapViewActivity extends AppCompatActivity implements OnMapReadyCall
         }//if Map Not ready
 
         //This means the new state is true (checked)
+        //For this option, we need to see if the location also contains container and/or paper. In
+        //that case, we should check the state of their corresponding checkboxes and leave the
+        //marker visible in that case or else it will create bugs (like the one on Granville)
         if (b) {
             //this is the case that the check box is turned on. Make markers with garbgae tag visible
             for (Marker marker: mMarkerArrayList) {
+
                 Object tagObject = marker.getTag();
                 boolean[] tagArray = (boolean[]) tagObject;
-                if (tagArray[0]) {
+                boolean garbage =tagArray[0];
+                if (garbage) {
                     marker.setVisible(true);
                 }
             }//for
         } else {
             //This is for when they turned it off, make all the ones with garbage tag invisible
-            for (Marker marker: mMarkerArrayList) {
-                Object tagObject = marker.getTag();
-                boolean[] tagArray = (boolean[]) tagObject;
-                if (tagArray[0]) {
-                    marker.setVisible(false);
-                }
-            }//for
+            //Figure out if any other check box is on
+            if (!mContainerCheckbox.isChecked() && !mPaperCheckbox.isChecked()) {
+                for (Marker marker: mMarkerArrayList) {
+                    Object tagObject = marker.getTag();
+                    boolean[] tagArray = (boolean[]) tagObject;
+                    boolean garbage = tagArray[0];
+                    if (garbage) {
+                        marker.setVisible(false);
+                    }//if
+                }//for
+            } else {
+                for (Marker marker: mMarkerArrayList) {
+                    Object tagObject = marker.getTag();
+                    boolean[] tagArray = (boolean[]) tagObject;
+                    boolean garbage = tagArray[0];
+                    boolean container = tagArray[1];
+                    boolean paper = tagArray[2];
+                    //Here we need to figure out the other attributes
+                    if (garbage && !((container && mContainerCheckbox.isChecked()) || (paper && mPaperCheckbox.isChecked())) ) {
+                        marker.setVisible(false);
+                    }//if
+                }//for
+            }
         }
         return true;
     }//garbageFilter
@@ -389,19 +422,36 @@ public class MapViewActivity extends AppCompatActivity implements OnMapReadyCall
             for (Marker marker: mMarkerArrayList) {
                 Object tagObject = marker.getTag();
                 boolean[] tagArray = (boolean[]) tagObject;
-                if (tagArray[1]) {
+                boolean container = tagArray[1];
+                if (container) {
                     marker.setVisible(true);
                 }
             }//for
         } else {
             //This is for when they turned it off, make all the ones with garbage tag invisible
-            for (Marker marker: mMarkerArrayList) {
-                Object tagObject = marker.getTag();
-                boolean[] tagArray = (boolean[]) tagObject;
-                if (tagArray[1]) {
-                    marker.setVisible(false);
-                }
-            }//for
+            //Figure out if any other check box is on
+            if (!mGarbageCheckbox.isChecked() && !mPaperCheckbox.isChecked()) {
+                for (Marker marker : mMarkerArrayList) {
+                    Object tagObject = marker.getTag();
+                    boolean[] tagArray = (boolean[]) tagObject;
+                    boolean container = tagArray[1];
+                    if (container) {
+                        marker.setVisible(false);
+                    }//if
+                }//for
+            } else {
+                for (Marker marker : mMarkerArrayList) {
+                    Object tagObject = marker.getTag();
+                    boolean[] tagArray = (boolean[]) tagObject;
+                    boolean garbage = tagArray[0];
+                    boolean container = tagArray[1];
+                    boolean paper = tagArray[2];
+                    //Here we need to figure out the other attributes
+                    if (container && !((garbage && mGarbageCheckbox.isChecked()) || (paper && mPaperCheckbox.isChecked()))) {
+                        marker.setVisible(false);
+                    }//if
+                }//for
+            }
         }
         return true;
     }//containerFilter
@@ -424,19 +474,36 @@ public class MapViewActivity extends AppCompatActivity implements OnMapReadyCall
             for (Marker marker: mMarkerArrayList) {
                 Object tagObject = marker.getTag();
                 boolean[] tagArray = (boolean[]) tagObject;
-                if (tagArray[2]) {
+                boolean paper = tagArray[2];
+                if (paper) {
                     marker.setVisible(true);
                 }
             }//for
         } else {
             //This is for when they turned it off, make all the ones with garbage tag invisible
-            for (Marker marker: mMarkerArrayList) {
-                Object tagObject = marker.getTag();
-                boolean[] tagArray = (boolean[]) tagObject;
-                if (tagArray[2]) {
-                    marker.setVisible(false);
-                }
-            }//for
+            //Figure out if any other check box is on
+            if (!mGarbageCheckbox.isChecked() && !mContainerCheckbox.isChecked()) {
+                for (Marker marker : mMarkerArrayList) {
+                    Object tagObject = marker.getTag();
+                    boolean[] tagArray = (boolean[]) tagObject;
+                    boolean paper = tagArray[2];
+                    if (paper) {
+                        marker.setVisible(false);
+                    }//if
+                }//for
+            } else {
+                for (Marker marker : mMarkerArrayList) {
+                    Object tagObject = marker.getTag();
+                    boolean[] tagArray = (boolean[]) tagObject;
+                    boolean garbage = tagArray[0];
+                    boolean container = tagArray[1];
+                    boolean paper = tagArray[2];
+                    //Here we need to figure out the other attributes
+                    if (paper && !((garbage && mGarbageCheckbox.isChecked()) || (container && mContainerCheckbox.isChecked()))) {
+                        marker.setVisible(false);
+                    }//if
+                }//for
+            }
         }
         return true;
     }//paperFilter
@@ -494,7 +561,7 @@ public class MapViewActivity extends AppCompatActivity implements OnMapReadyCall
             //Make a LatLng object from myLocation data
             mMyLatLng = new LatLng(mMyLocation.getLatitude(), mMyLocation.getLongitude());
             //Check to see if the user's location is within bounds
-            if (mLocationLimit.contains(mMyLatLng)) {
+            if (UBC_BOUND.contains(mMyLatLng)) {
                 //Move the camera to user's location
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mMyLatLng, 16.0f));
             } else {

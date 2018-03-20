@@ -5,7 +5,7 @@ import com.google.android.gms.maps.model.LatLng;
 /**
  * Created by Khashayar on 3/6/2018.
  *
- * MyLocation is similiar to a row of our database table. The object of this class will have all
+ * MyLocation is similar to a row of our database table. The object of this class will have all
  * the attributes of the Location data (including Lat, Lng, boolean variables, comments, etc).
  *
  * This is used to create an object for each location and store it in an ArrayList for app

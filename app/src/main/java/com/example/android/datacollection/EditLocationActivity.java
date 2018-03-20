@@ -47,6 +47,7 @@ public class EditLocationActivity extends AppCompatActivity implements LoaderMan
     Uri mCurrentLocationUri;
     Button mMapsButton, mSaveButton, mDeleteButton;
     double mLat, mLon;
+    String mDateTime;
 
     //This is for tracking unsaved changes
     private boolean mDataChanged = false;
@@ -264,7 +265,7 @@ public class EditLocationActivity extends AppCompatActivity implements LoaderMan
 
         //Get the text from comments edit text
         String mComment = mCommentText.getText().toString().trim();
-        mComment += "\nUpdated on " + EnterLocationActivity.mDateFormat.format(Calendar.getInstance().getTime());
+        mDateTime += "\nUpdated on " + EnterLocationActivity.mDateFormat.format(Calendar.getInstance().getTime());
         String mEstablishmentComment = mEstablishmentText.getText().toString().trim();
 
         // Create a new map of values,
@@ -275,6 +276,7 @@ public class EditLocationActivity extends AppCompatActivity implements LoaderMan
         values.put(LocationEntry.COLUMN_LOCATION_ESTABLISHMENT, mEstablishment);
         values.put(LocationEntry.COLUMN_LOCATION_COMMENT, mComment);
         values.put(LocationEntry.COLUMN_LOCATION_ESTABLISHMENT_COMMENT, mEstablishmentComment);
+        values.put(LocationEntry.COLUMN_LOCATION_DATE, mDateTime);
 
         int result = getContentResolver().update(
                 mCurrentLocationUri,             //Uri
@@ -314,7 +316,8 @@ public class EditLocationActivity extends AppCompatActivity implements LoaderMan
                 LocationEntry.COLUMN_LOCATION_CONTAINER,
                 LocationEntry.COLUMN_LOCATION_COMMENT,
                 LocationEntry.COLUMN_LOCATION_ESTABLISHMENT,
-                LocationEntry.COLUMN_LOCATION_ESTABLISHMENT_COMMENT
+                LocationEntry.COLUMN_LOCATION_ESTABLISHMENT_COMMENT,
+                LocationEntry.COLUMN_LOCATION_DATE
         };
 
         return new CursorLoader(this,   //parent activity context
@@ -348,6 +351,8 @@ public class EditLocationActivity extends AppCompatActivity implements LoaderMan
             int establishment = data.getInt(data.getColumnIndex(LocationEntry.COLUMN_LOCATION_ESTABLISHMENT));
             String comment = data.getString(data.getColumnIndex(LocationEntry.COLUMN_LOCATION_COMMENT));
             String establishmentComment = data.getString(data.getColumnIndex(LocationEntry.COLUMN_LOCATION_ESTABLISHMENT_COMMENT));
+            mDateTime = data.getString(data.getColumnIndex(LocationEntry.COLUMN_LOCATION_DATE));
+
 
             //update the view on the screen
             mLocationId.setText(Id);

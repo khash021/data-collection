@@ -57,7 +57,7 @@ public class EnterLocationActivity extends AppCompatActivity implements GoogleAp
     private double mLon = 0.0;
     //Checkboxes, and EditTexts
     CheckBox mGarbageCheckBox, mContainerCheckBox, mPaperCheckBox, mLocationCheckBox,
-            mEstablishmentCheckBox;
+            mEstablishmentCheckBox, mCompostCheckBox;
     EditText mCommentText, mEstablishmentText;
 
     @Override
@@ -85,6 +85,7 @@ public class EnterLocationActivity extends AppCompatActivity implements GoogleAp
         mEstablishmentCheckBox = findViewById(R.id.checkbox_inside);
         mCommentText = findViewById(R.id.comment_text);
         mEstablishmentText = findViewById(R.id.inside_text);
+        mCompostCheckBox = findViewById(R.id.checkbox_compost);
 
 
         //Buttons
@@ -175,6 +176,9 @@ public class EnterLocationActivity extends AppCompatActivity implements GoogleAp
                 if (mEstablishmentCheckBox.isChecked()) {
                     mEstablishmentCheckBox.setChecked(false);
                 }
+                if (mCompostCheckBox.isChecked()) {
+                    mCompostCheckBox.setChecked(false);
+                }
                 if (mCommentText.getText().toString().trim().length() > 0) {
                     mCommentText.setText("");
                 }
@@ -201,29 +205,32 @@ public class EnterLocationActivity extends AppCompatActivity implements GoogleAp
                             (!mEstablishmentCheckBox.isChecked() &&
                                     mEstablishmentText.getText().toString().trim().length() < 1)) {
 
-                    insertLocation();
-                    //Reset all the checkboxes and Edit Texts
-                    if (mGarbageCheckBox.isChecked()) {
-                        mGarbageCheckBox.setChecked(false);
-                    }
-                    if (mContainerCheckBox.isChecked()) {
-                        mContainerCheckBox.setChecked(false);
-                    }
-                    if (mPaperCheckBox.isChecked()) {
-                        mPaperCheckBox.setChecked(false);
-                    }
-                    if (mLocationCheckBox.isChecked()) {
-                        mLocationCheckBox.setChecked(false);
-                    }
-                    if (mCommentText.getText().toString().length() > 0) {
-                        mCommentText.setText("");
-                    }
-                    if (mCommentText.getText().toString().trim().length() > 0) {
-                        mCommentText.setText("");
-                    }
-                    if (mEstablishmentText.getText().toString().trim().length() > 0) {
-                        mEstablishmentText.setText("");
-                    }
+                        insertLocation();
+                        //Reset all the checkboxes and Edit Texts
+                        if (mGarbageCheckBox.isChecked()) {
+                            mGarbageCheckBox.setChecked(false);
+                        }
+                        if (mContainerCheckBox.isChecked()) {
+                            mContainerCheckBox.setChecked(false);
+                        }
+                        if (mPaperCheckBox.isChecked()) {
+                            mPaperCheckBox.setChecked(false);
+                        }
+                        if (mCompostCheckBox.isChecked()) {
+                            mCompostCheckBox.setChecked(false);
+                        }
+                        if (mLocationCheckBox.isChecked()) {
+                            mLocationCheckBox.setChecked(false);
+                        }
+                        if (mCommentText.getText().toString().length() > 0) {
+                            mCommentText.setText("");
+                        }
+                        if (mCommentText.getText().toString().trim().length() > 0) {
+                            mCommentText.setText("");
+                        }
+                        if (mEstablishmentText.getText().toString().trim().length() > 0) {
+                            mEstablishmentText.setText("");
+                        }
                 } else {
                         Toast.makeText(EnterLocationActivity.this, "If the establishment" +
                                 " checkbox is ticked, there needs to be a comment; and vice versa",
@@ -267,10 +274,13 @@ public class EnterLocationActivity extends AppCompatActivity implements GoogleAp
         mGarbageCheckBox = findViewById(R.id.checkbox_garbage);
         mContainerCheckBox = findViewById(R.id.checkbox_container);
         mPaperCheckBox = findViewById(R.id.checkbox_paper);
+        mCompostCheckBox = findViewById(R.id.checkbox_compost);
         mLocationCheckBox = findViewById(R.id.checkbox_location);
         mEstablishmentCheckBox = findViewById(R.id.checkbox_inside);
         mCommentText = findViewById(R.id.comment_text);
         mEstablishmentText = findViewById(R.id.inside_text);
+
+        String mComment = "";
 
         //Converting boolean from our checkboxes into integers for the database
         int mGarbage, mContainer, mPaper, mEstablishment;
@@ -295,8 +305,13 @@ public class EnterLocationActivity extends AppCompatActivity implements GoogleAp
             mEstablishment = 0;
         }
 
+        //Handling compost
+        if (mCompostCheckBox.isChecked()){
+            mComment = "compost";
+        }
+
         //Get the text from comments edit text
-        String mComment = mCommentText.getText().toString().trim();
+        mComment += "\n" + mCommentText.getText().toString().trim();
         String mEstablishmentComment = mEstablishmentText.getText().toString().trim();
 
         //Current date and time using the format declared at the beginning

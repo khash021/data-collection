@@ -32,6 +32,9 @@ public class LocationDbHelper extends SQLiteOpenHelper {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }//LocationDbHelper
 
+    private static final String ADD_COLUMN_COMPOST = "ALTER TABLE " + LocationEntry.TABLE_NAME
+            + " ADD COLUMN " + LocationEntry.COLUMN_LOCATION_COMPOST + " INTEGER;";
+
 
     @Override
     public void onCreate(SQLiteDatabase db) {
@@ -66,7 +69,9 @@ public class LocationDbHelper extends SQLiteOpenHelper {
     }//onCreate
 
     @Override
-    public void onUpgrade(SQLiteDatabase DB, int oldVersion, int newVersion) {
-        // The database is still at version 1, so there's nothing to do be done here.
+    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+//        if (newVersion == 2) {
+//            db.execSQL(ADD_COLUMN_COMPOST);
+//        }
     }//onUpgrade
 }//main

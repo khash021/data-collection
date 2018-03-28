@@ -130,6 +130,18 @@ public class MainActivity extends AppCompatActivity  {
             }
         });//Cluster
 
+//        //add new column button
+//        Button addNewColumn = findViewById(R.id.update_db);
+//        addNewColumn.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                LocationDbHelper dbHelper = new LocationDbHelper(getApplicationContext());
+//                dbHelper.onUpgrade();
+//                getContentResolver().onUp
+//
+//            }
+//        });//new column butoon
+
         /**
          * This section figures out what is the source of data (mobile, Wifi, etc)
          * This is going to be used later together with Day/Night to set the night mode (only if

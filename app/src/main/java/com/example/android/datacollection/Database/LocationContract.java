@@ -144,6 +144,15 @@ public class LocationContract {
          */
         public final static String COLUMN_LOCATION_DATE = "date_time";
 
+        /**
+         * Compost
+         *
+         * The only possible values are: 0, and 1; false, and true respectively
+         *
+         * Type: INTEGER
+         */
+        public final static String COLUMN_LOCATION_COMPOST = "compost";
+
 
 
 

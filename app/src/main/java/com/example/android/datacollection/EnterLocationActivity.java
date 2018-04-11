@@ -408,7 +408,7 @@ public class EnterLocationActivity extends AppCompatActivity implements GoogleAp
         //We need to make sure that there is live location, otherwise maps will point to 0,0 in the
         //middle of nowhere. In this case we show a Toast message and exit the method.
         if (mLat == 0.0 && mLon == 0.0) {
-            Toast.makeText(this, "Location is not aquired.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Location is not acquired.", Toast.LENGTH_SHORT).show();
             return;
         }
         //Create the Uri first

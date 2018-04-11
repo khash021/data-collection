@@ -143,8 +143,9 @@ public class MapViewActivity extends AppCompatActivity implements OnMapReadyCall
     private LatLngBounds VANCOUVER_DT_BOUND = new LatLngBounds(new LatLng( 49.268642, -123.148639),
             new LatLng( 49.300045, -123.095893));
     //Vancouver bound
-    private LatLngBounds VANCOUVER_BOUND = new LatLngBounds(new LatLng(  49.239488, -123.270513),
-            new LatLng( 49.300045, -123.095893));
+    private LatLngBounds VANCOUVER_BOUND = new LatLngBounds(
+            new LatLng(49.033396, -123.302132),
+            new LatLng(49.363144, -122.452284));
     //UBC Bound
     private LatLngBounds UBC_BOUND = new LatLngBounds(new LatLng(  49.239488, -123.270513),
             new LatLng(  49.281679, -123.20184));
@@ -277,7 +278,7 @@ public class MapViewActivity extends AppCompatActivity implements OnMapReadyCall
             @Override
             public boolean onMyLocationButtonClick() {
                 //check to see if the user's location is within bounds
-                if (UBC_BOUND.contains(mMyLatLng)) {
+                if (VANCOUVER_BOUND.contains(mMyLatLng)) {
                     //do nothing default behavior will move the camera to user's lcoation
                     return false;
                 } else {
@@ -561,7 +562,7 @@ public class MapViewActivity extends AppCompatActivity implements OnMapReadyCall
             //Make a LatLng object from myLocation data
             mMyLatLng = new LatLng(mMyLocation.getLatitude(), mMyLocation.getLongitude());
             //Check to see if the user's location is within bounds
-            if (UBC_BOUND.contains(mMyLatLng)) {
+            if (VANCOUVER_BOUND.contains(mMyLatLng)) {
                 //Move the camera to user's location
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mMyLatLng, 16.0f));
             } else {

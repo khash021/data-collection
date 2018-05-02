@@ -1,193 +1,139 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/coordinator_layout"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
-<LinearLayout
-    android:id="@+id/location_entry_main"
-    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:text="Location"
-        android:layout_marginBottom="6dp"/>
-
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        >
+        android:layout_height="0dp"
+        android:layout_weight="3">
 
-        <TextView
-            android:id="@+id/txt_location"
-            android:layout_width="wrap_content"
-            android:layout_height="36dp"
-            android:layout_gravity="center"
-            android:paddingLeft="24dp"
-            android:paddingRight="24dp"
-            android:layout_marginTop="6dp"
-            android:layout_marginBottom="6dp"
-            android:layout_centerHorizontal="true"
-            />
+    <fragment xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/map"
+        android:name="com.google.android.gms.maps.SupportMapFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context="com.example.android.datacollection.EnterLocationActivity" />
 
-
-        <CheckBox
-            android:id="@+id/checkbox_location"
+        <ImageView
+            android:id="@+id/image_view_marker"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignBaseline="@+id/txt_location"
-            android:layout_alignParentRight="true"
-            android:text="Got it!"
-            android:layout_marginRight="12dp"
-            android:clickable="false"/>
-
-        <Button
-            android:id="@+id/map_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignBaseline="@+id/txt_location"
-            android:layout_alignParentLeft="true"
-            android:layout_marginLeft="12dp"
-            android:layout_marginTop="2dp"
-            android:text="map"/>
+            android:src="@drawable/ic_marker_add_location"
+            android:layout_centerInParent="true"/>
 
     </RelativeLayout>
 
-
-    <TextView
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/location_entry_main"
         android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_gravity="center_horizontal"
-        android:background="#000000"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
-        android:layout_marginTop="4dp"
-        android:layout_marginBottom="4dp"/>
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:text="Select all that apply"
-        android:layout_marginBottom="6dp"
-        android:layout_marginTop="6dp"/>
+        android:layout_weight="2"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        >
 
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
 
-    <CheckBox
-        android:id="@+id/checkbox_garbage"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Garbage"
-        android:layout_marginLeft="36dp"
-        android:layout_marginBottom="12dp"/>
-    <CheckBox
-        android:id="@+id/checkbox_container"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Container"
-        android:layout_marginLeft="36dp"
-        android:layout_marginBottom="12dp"/>
-    <CheckBox
-        android:id="@+id/checkbox_paper"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Paper"
-        android:layout_marginLeft="36dp"
-        android:layout_marginBottom="6dp"/>
-
-    </LinearLayout>
-
-    <CheckBox
-        android:id="@+id/checkbox_compost"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Compost"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginBottom="6dp"/>
-
-    <EditText
-        android:id="@+id/comment_text"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:hint="Enter comment (optional)"
-        android:textSize="10dp"
-        android:layout_marginRight="36dp"
-        android:layout_marginLeft="36dp"
-        android:inputType="textCapSentences"/>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:paddingTop="8dp">
-
-        <CheckBox
-            android:id="@+id/checkbox_inside"
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Inside"
-            android:layout_marginLeft="36dp" />
+            android:orientation="horizontal"
+            android:layout_marginTop="8dp">
+
+            <CheckBox
+                android:id="@+id/checkbox_garbage"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                android:layout_marginLeft="12dp"
+                android:text="Garbage" />
+
+            <CheckBox
+                android:id="@+id/checkbox_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                android:layout_marginLeft="2dp"
+                android:text="Container" />
+
+
+            <CheckBox
+                android:id="@+id/checkbox_paper"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="6dp"
+                android:layout_marginLeft="2dp"
+                android:text="Paper" />
+
+            <CheckBox
+                android:id="@+id/checkbox_compost"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="6dp"
+                android:text="Compost" />
+
+        </LinearLayout>
+
 
         <EditText
-            android:id="@+id/inside_text"
-            android:layout_width="0dp"
+            android:id="@+id/comment_text"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Enter details ofestablishment"
-            android:textSize="10dp"
-            android:layout_marginLeft="16dp"
-            android:layout_weight="1"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginLeft="36dp"
             android:layout_marginRight="36dp"
-            android:inputType="textCapSentences"/>
+            android:hint="Enter comment (optional)"
+            android:inputType="textCapSentences"
+            android:textSize="10dp" />
 
+        <Button
+            android:id="@+id/submit_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="6dp"
+            android:layout_marginTop="6dp"
+            android:paddingLeft="24dp"
+            android:paddingRight="24dp"
+            android:text="Submit" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="4dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginTop="4dp"
+            android:background="#000000" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/undo_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginRight="8dp"
+                android:text="Undo" />
+
+            <Button
+                android:id="@+id/reset_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginLeft="8dp"
+                android:text="Reset" />
+
+        </LinearLayout>
     </LinearLayout>
 
-    <Button
-        android:id="@+id/submit_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Submit"
-        android:paddingLeft="24dp"
-        android:paddingRight="24dp"
-        android:layout_marginTop="6dp"
-        android:layout_marginBottom="6dp"
-        android:layout_gravity="center_horizontal"/>
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_gravity="center_horizontal"
-        android:background="#000000"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
-        android:layout_marginTop="4dp"
-        android:layout_marginBottom="4dp"/>
-
-    <Button
-        android:id="@+id/undo_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:text="Undo"/>
-
-    <Button
-        android:id="@+id/reset_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Reset"
-        android:paddingLeft="24dp"
-        android:paddingRight="24dp"
-        android:layout_marginTop="6dp"
-        android:layout_marginBottom="6dp"
-        android:layout_gravity="center_horizontal"/>
-
 </LinearLayout>
-
-</android.support.design.widget.CoordinatorLayout>

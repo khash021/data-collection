@@ -6,6 +6,7 @@ import android.provider.BaseColumns;
 
 /**
  * Created by Khashayar on 2/17/2018.
+ *
  *  * This is the class that contains the schema of the table and all the constants for out DB
  */
 
@@ -156,6 +157,6 @@ public class LocationContract {
 
 
 
-    }//EnterLocationActivity
+    }//LocationEntry
 
 }//main

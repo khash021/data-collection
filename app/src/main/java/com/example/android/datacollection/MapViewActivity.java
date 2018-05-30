@@ -146,6 +146,12 @@ public class MapViewActivity extends AppCompatActivity implements OnMapReadyCall
     private LatLngBounds VANCOUVER_BOUND = new LatLngBounds(
             new LatLng(49.033396, -123.302132),
             new LatLng(49.363144, -122.452284));
+
+    //Vancouver bound
+    private LatLngBounds SQUAMISH_VANCOUVER_BOUND = new LatLngBounds(
+            new LatLng( 49.038178, -123.378854),
+            new LatLng( 49.886601, -122.440345));
+
     //UBC Bound
     private LatLngBounds UBC_BOUND = new LatLngBounds(new LatLng(  49.239488, -123.270513),
             new LatLng(  49.281679, -123.20184));
@@ -247,14 +253,14 @@ public class MapViewActivity extends AppCompatActivity implements OnMapReadyCall
 
         //restricting users panning to Vancouver dt area. First input is the SW corner, and the
         // second NE corner of the restricted pan area
-        mMap.setLatLngBoundsForCameraTarget(VANCOUVER_BOUND);
+        mMap.setLatLngBoundsForCameraTarget(SQUAMISH_VANCOUVER_BOUND);
 
         //Enable my location layer
         mMap.setMyLocationEnabled(true);
 
         //Since the pan is limited, we should also VANCOUVER_DT_BOUND min zoom, other wise they can zoom all the
         //way out and the bounds would be useless
-        mMap.setMinZoomPreference(13.0f);
+        mMap.setMinZoomPreference(8.0f);
 
         //Use the helper method to add markers to the map retrieved from the database
         populateMap();

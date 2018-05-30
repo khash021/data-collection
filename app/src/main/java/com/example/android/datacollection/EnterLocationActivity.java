@@ -7,6 +7,8 @@ import android.database.Cursor;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -126,26 +128,33 @@ public class EnterLocationActivity extends AppCompatActivity implements GoogleAp
                  * We also need to check to see if the establishment checkbox is true, if so
                  * we require details. if the establishment text is empty, we show a toast message
                  * telling the user they need to enter comments regarding the establishment
+                 * We also need to make sure at least one of the checkboxes is checked
                  */
-                insertLocation();
-                //Reset all the checkboxes and Edit Texts
-                if (mGarbageCheckBox.isChecked()) {
-                    mGarbageCheckBox.setChecked(false);
-                }
-                if (mContainerCheckBox.isChecked()) {
-                    mContainerCheckBox.setChecked(false);
-                }
-                if (mPaperCheckBox.isChecked()) {
-                    mPaperCheckBox.setChecked(false);
-                }
-                if (mCompostCheckBox.isChecked()) {
-                    mCompostCheckBox.setChecked(false);
-                }
-                if (mCommentText.getText().toString().length() > 0) {
-                    mCommentText.setText("");
-                }
-                if (mCommentText.getText().toString().trim().length() > 0) {
-                    mCommentText.setText("");
+                if (!mGarbageCheckBox.isChecked() && !mContainerCheckBox.isChecked() &&
+                        !mPaperCheckBox.isChecked() && !mCompostCheckBox.isChecked()) {
+                    Toast.makeText(getApplicationContext(), "Please select at least on detail",
+                            Toast.LENGTH_SHORT).show();
+                } else {
+                    insertLocation();
+                    //Reset all the checkboxes and Edit Texts
+                    if (mGarbageCheckBox.isChecked()) {
+                        mGarbageCheckBox.setChecked(false);
+                    }
+                    if (mContainerCheckBox.isChecked()) {
+                        mContainerCheckBox.setChecked(false);
+                    }
+                    if (mPaperCheckBox.isChecked()) {
+                        mPaperCheckBox.setChecked(false);
+                    }
+                    if (mCompostCheckBox.isChecked()) {
+                        mCompostCheckBox.setChecked(false);
+                    }
+                    if (mCommentText.getText().toString().length() > 0) {
+                        mCommentText.setText("");
+                    }
+                    if (mCommentText.getText().toString().trim().length() > 0) {
+                        mCommentText.setText("");
+                    }
                 }
             }
         });//onClickListener - submit
@@ -307,8 +316,9 @@ public class EnterLocationActivity extends AppCompatActivity implements GoogleAp
             // And add it to the confirmation method.
             String id = String.valueOf(ContentUris.parseId(newUri));
             // Otherwise, the insertion was successful and we can display a snackbar
-            //pop-up message
-            Toast.makeText(this, "Added ID: " + id, Toast.LENGTH_SHORT).show();
+//            Toast.makeText(this, "Added ID: " + id, Toast.LENGTH_SHORT).show();
+            CoordinatorLayout coordinatorLayout = findViewById(R.id.coordinator_layout);
+            Snackbar.make(coordinatorLayout, "Adde with ID: " + id, Snackbar.LENGTH_SHORT).show();
         }
     }//insertLocation
 
